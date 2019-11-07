@@ -1,3 +1,8 @@
 Flask>=1.0
 psycopg2-binary>=2.7
 gunicorn>=19.9
+Flask-WTF
+wtforms_components
+passlib
+flask-login
+
