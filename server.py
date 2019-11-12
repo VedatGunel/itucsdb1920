@@ -32,8 +32,8 @@ def create_app():
     lm.login_view = "login_page"
 
     db = Database()
-    db.add_book(Book("Slaughterhouse-Five", year=1972))
-    db.add_book(Book("The Shining"))
+    db.add_book(Book("Angels & Demons", "Dan Brown", "Mystery", year=2000, pageNumber=616))
+    db.add_book(Book("Die Verwandlung"))
     app.config["db"] = db
 
     return app

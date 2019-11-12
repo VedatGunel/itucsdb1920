@@ -22,12 +22,12 @@ class Database:
         book = self.books.get(book_key)
         if book is None:
             return None
-        book_ = Book(book.title, year=book.year)
+        book_ = Book(book.title, author=book.author, genre=book.genre, year=book.year, pageNumber=book.pageNumber)
         return book_
 
     def get_books(self):
         books = []
         for book_key, book in self.books.items():
-            book_ = Book(book.title, year=book.year)
+            book_ = Book(book.title, author=book.author, genre=book.genre, year=book.year, pageNumber=book.pageNumber)
             books.append((book_key, book_))
         return books

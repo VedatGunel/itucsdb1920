@@ -41,8 +41,11 @@ def book_add_page():
     form = BookEditForm()
     if form.validate_on_submit():
         title = form.data["title"]
+        author = form.data["author"]
         year = form.data["year"]
-        book = Book(title, year=year)
+        genre = form.data["genre"]
+        pageNumber = form.data["pageNumber"]
+        book = Book(title, author=author, year=year, genre=genre, pageNumber=pageNumber)
         db = current_app.config["db"]
         book_key = db.add_book(book)
         return redirect(url_for("book_page", book_key=book_key))
@@ -56,12 +59,18 @@ def book_edit_page(book_key):
     form = BookEditForm()
     if form.validate_on_submit():
         title = form.data["title"]
+        author = form.data["author"]
         year = form.data["year"]
-        book = Book(title, year=year)
+        genre = form.data["genre"]
+        pageNumber = form.data["pageNumber"]
+        book = Book(title, author=author, year=year, genre=genre, pageNumber=pageNumber)
         db.update_book(book_key, book)
         return redirect(url_for("book_page", book_key=book_key))
     form.title.data = book.title
+    form.author.data = book.author if book.author else ""
     form.year.data = book.year if book.year else ""
+    form.genre.data = book.genre if book.genre else ""
+    form.pageNumber.data = book.pageNumber if book.pageNumber else ""
     return render_template("book_edit.html", form=form)
 
 def validate_book_form(form):

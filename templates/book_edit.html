@@ -19,9 +19,45 @@
       </div>
 
       <div class="field">
+        <label for="author" class="label">Author</label>
+        <div class="control">
+          {{ form.author(class='input') }}
+        </div>
+        {% for error in form.author.errors %}
+        <p class="help has-background-warning">
+            {{ error }}
+        </p>
+        {% endfor %}
+      </div>
+
+      <div class="field">
         <label for="year" class="label">Year</label>
         <div class="control">
           {{ form.year(class='input') }}
+        </div>
+        {% for error in form.year.errors %}
+        <p class="help has-background-warning">
+            {{ error }}
+        </p>
+        {% endfor %}
+      </div>
+
+      <div class="field">
+        <label for="genre" class="label">Genres</label>
+        <div class="control">
+          {{ form.genre(class='input') }}
+        </div>
+        {% for error in form.year.errors %}
+        <p class="help has-background-warning">
+            {{ error }}
+        </p>
+        {% endfor %}
+      </div>
+
+      <div class="field">
+        <label for="pageNumber" class="label">Number of Pages</label>
+        <div class="control">
+          {{ form.pageNumber(class='input') }}
         </div>
         {% for error in form.year.errors %}
         <p class="help has-background-warning">

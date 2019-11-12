@@ -8,10 +8,28 @@
         <th>Title:</th>
         <td>{{ book.title }}</td>
       </tr>
+      {% if book.author %}
+      <tr>
+        <th>Author:</th>
+        <td>{{ book.author }}</td>
+      </tr>
+      {% endif %}
       {% if book.year %}
       <tr>
         <th>Year:</th>
         <td>{{ book.year }}</td>
+      </tr>
+      {% endif %}
+      {% if book.genre %}
+      <tr>
+        <th>Genres:</th>
+        <td>{{ book.genre }}</td>
+      </tr>
+      {% endif %}
+      {% if book.pageNumber %}
+      <tr>
+        <th>Number of Pages:</th>
+        <td>{{ book.pageNumber }}</td>
       </tr>
       {% endif %}
     </table>
