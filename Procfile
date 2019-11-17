@@ -1,2 +1,1 @@
-web: gunicorn server:app_create()
-release: python server.py
+web: gunicorn server:app
