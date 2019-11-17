@@ -1,7 +1,18 @@
 {% extends "layout.html" %}
-{% block title %}Edit book{% endblock %}
+{% block title %}
+{% if form.title.data %}
+Edit book
+{% else %}
+Add book
+{% endif %}
+{% endblock %}
 {% block content %}
-    <h1 class="title">Edit book</h1>
+    <h1 class="title">
+      {% if form.title.data %}
+      Edit book
+      {% else %}
+      Add book
+      {% endif %}</h1>
 
     <form action="" method="post" name="book_edit">
       {{ form.csrf_token }}
