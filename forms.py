@@ -8,7 +8,7 @@ from datetime import datetime
 
 class BookEditForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
-    author = StringField("Author")
+    author = StringField("Author", validators=[Optional()])
 
     year = IntegerField(
         "Year",
@@ -17,8 +17,8 @@ class BookEditForm(FlaskForm):
             NumberRange(min=0, max=datetime.now().year),
         ],
     )
-    genre = StringField("Genre")
-    pageNumber = IntegerField("Number of Pages")
+    genre = StringField("Genre", validators=[Optional()])
+    pageNumber = IntegerField("Number of Pages", validators=[Optional(), NumberRange(min=0)])
 
 class RegistrationForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(), Length(min=3, max=20)])

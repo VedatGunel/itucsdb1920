@@ -19,6 +19,7 @@ def create_app():
     app.config.from_object("settings")
 
     app.add_url_rule("/", view_func=views.home_page)
+    app.add_url_rule("/register", view_func=views.registration_page, methods=["GET", "POST"])
     app.add_url_rule("/login", view_func=views.login_page, methods=["GET", "POST"])
 
     app.add_url_rule("/logout", view_func=views.logout_page)
@@ -29,11 +30,9 @@ def create_app():
     app.add_url_rule("/new-book", view_func=views.book_add_page, methods=["GET", "POST"])
 
     lm.init_app(app)
-    lm.login_view = "login_page"
+    lm.login_view = "login_page"    
 
-    db = Database()
-    db.add_book(Book("Angels & Demons", "Dan Brown", "Mystery", year=2000, pageNumber=616))
-    db.add_book(Book("Die Verwandlung"))
+    db = Database(app.config["DATABASE_URL"])
     app.config["db"] = db
 
     return app
