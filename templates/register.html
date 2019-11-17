@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <div class="column is-4 is-offset-4">
+            <h3 class="title has-text-grey">Register</h3>
+            <div class="box">
+              <form action="" method="post" name="register">
+                {{ form.hidden_tag() }}
+
+                <div class="field">
+                  <div class="control">
+                    {{ form.username(required=True, autofocus=True,
+                                     class='input is-large',
+                                     placeholder='your username') }}
+                  </div>
+                  {% for error in form.username.errors %}
+                    <p class="help has-background-warning">
+                        {{ error }}
+                    </p>
+                  {% endfor %}
+                </div>
+                <div class="field">
+                        <div class="control">
+                          {{ form.email(required=True, autofocus=True,
+                                           class='input is-large',
+                                           placeholder='your email') }}
+                        </div>
+                        {% for error in form.email.errors %}
+                          <p class="help has-background-warning">
+                              {{ error }}
+                          </p>
+                        {% endfor %}
+                      </div>
+
+                <div class="field">
+                  <div class="control">
+                    {{ form.password(required=True, class='input is-large',
+                                     placeholder='your password') }}
+                  </div>
+                  {% for error in form.password.errors %}
+                    <p class="help has-background-warning">
+                        {{ error }}
+                    </p>
+                  {% endfor %}
+                </div>
+                <div class="field">
+                        <div class="control">
+                          {{ form.confirm_password(required=True, class='input is-large',
+                                           placeholder='confirm password') }}
+                        </div>
+                        {% for error in form.confirm_password.errors %}
+                          <p class="help has-background-warning">
+                              {{ error }}
+                          </p>
+                        {% endfor %}
+                      </div>
+
+                <button class="button is-block is-info is-large is-fullwidth">
+                  Register
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+{% endblock %}

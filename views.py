@@ -3,8 +3,7 @@ from passlib.hash import pbkdf2_sha256 as hasher
 
 from flask import abort, current_app, render_template, request, redirect, url_for, flash
 from book import Book
-from forms import BookEditForm
-from forms import LoginForm
+from forms import BookEditForm, LoginForm, RegistrationForm
 from user import User, get_user
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -97,6 +96,12 @@ def validate_book_form(form):
 
     return len(form.errors) == 0
 
+def registration_page():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash("Registration successful.", "success")
+        return redirect(url_for("home_page"))
+    return render_template("register.html", form=form)
     	
 def login_page():
     form = LoginForm()
@@ -112,6 +117,7 @@ def login_page():
                 return redirect(next_page)
         flash("Invalid credentials.")
     return render_template("login.html", form=form)
+
 
 
 def logout_page():
