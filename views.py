@@ -118,6 +118,7 @@ def registration_page():
                 password = hasher.hash(form.data["password"])
                 user = User(username, email=email, password=password)
                 db.add_user(user)
+                user = db.get_user_by_username(username)
                 login_user(user)
                 flash("Registration successful.")
                 next_page = request.args.get("next", url_for("home_page"))
