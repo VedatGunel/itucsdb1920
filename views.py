@@ -159,5 +159,5 @@ def delete_review(review_id):
 def profile_page(user_id=None):
     db = current_app.config["db"]
     user = db.get_user_by_id(user_id)
-    reviews = db.get_reviews_by_user(user.id)
-    return render_template("profile.html", user=user, reviews=reviews)
+    reviews, book_names = db.get_reviews_by_user(user.id)
+    return render_template("profile.html", user=user, reviews=reviews, books=book_names)

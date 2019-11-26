@@ -1,5 +1,38 @@
 {% extends "layout.html" %}
 {% block title %}Profile{% endblock %}
 {% block content %}
-<h1>{{ user.username }}</h1>
+<h1 class="title">{{ user.username }}</h1>
+    {% if reviews %}
+    <section class="section">
+      <div class="container">
+        <h2 class="title">Reviews</h2>
+        {% for review, book in zip(reviews, books) %}
+          <article class="media">
+            <div class="media-content">
+              <div class="content">
+                <p class="is-size-4">
+                  <strong class="is-size-4">
+                    <a class="is-link" href="{{ url_for('book_page', book_key=review.book) }}">
+                      {{ book }}
+                    </a>
+                  </strong>
+                  <span class="icon"><i class="fas fa-star"></i></span>
+                  <small class="is-size-4">{{ review.score }}/10</small>
+                  <small class="is-size-6">{{review.datewritten.strftime('%Y-%m-%d %H:%M')}}</small>
+                  <br>
+                  {{ review.comment }}
+                </p>
+              </div>
+            </div>
+            {% if (review.author == current_user.id or current_user.is_admin) %}
+            <div class="media-right">
+                <a class="delete"
+                href="{{ url_for('delete_review', review_id=review.id) }}"></a>
+            </div>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}  
 {% endblock %}

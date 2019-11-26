@@ -6,7 +6,6 @@ import psycopg2 as dbapi2
 
 class Database:
     def __init__(self, db_url):
-        self.books = {}
         self.db_url = db_url
 
     def add_book(self, book):
@@ -164,7 +163,7 @@ class Database:
             cursor = connection.cursor()
             query = "SELECT USERID, SCORE, COMMENT, ID, DATEWRITTEN FROM REVIEW WHERE (BOOKID = %s) ORDER BY ID"
             cursor.execute(query, (book_key,))
-            connection.commit()           
+            connection.commit()
             for userid, score, comment, review_id, datewritten in cursor:
                 user_ids.append(userid)
                 author = self.get_user_by_id(userid).username
@@ -173,6 +172,7 @@ class Database:
     
     def get_reviews_by_user(self, user_id):
         reviews = []
+        book_names = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             query = "SELECT BOOKID, SCORE, COMMENT, ID, DATEWRITTEN FROM REVIEW WHERE (USERID = %s) ORDER BY ID"
@@ -180,8 +180,9 @@ class Database:
             connection.commit()           
             for book_id, score, comment, review_id, datewritten in cursor:
                 author = self.get_user_by_id(user_id).username
+                book_names.append(self.get_book(book_id).title)
                 reviews.append(Review(author, book_id, score, comment, review_id, datewritten))
-        return reviews
+        return reviews, book_names
 
     def get_review(self, review_id):
         with dbapi2.connect(self.db_url) as connection:
