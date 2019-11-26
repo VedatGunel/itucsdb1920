@@ -53,17 +53,22 @@
         <article class="media">
           <div class="media-content">
             <div class="content">
-              <p>
-                <strong class="is-size-4">{{ review.author }}</strong> <span class="icon"><i class="fas fa-star"></i></span> <small class="is-size-4">{{ review.score }}/10</small>
+              <p class="is-size-4">
+                <strong class="is-size-4">{{ review.author }}</strong>
+                <span class="icon"><i class="fas fa-star"></i></span>
+                <small class="is-size-4">{{ review.score }}/10</small>
+                <small class="is-size-6">{{review.datewritten.strftime('%Y-%m-%d %H:%M')}}</small>
                 <br>
                 {{ review.comment }}
               </p>
             </div>
           </div>
+          {% if (review.author == current_user.id or current_user.is_admin) %}
           <div class="media-right">
               <a class="delete"
               href="{{ url_for('delete_review', review_id=review.id) }}"></a>
           </div>
+          {% endif %}
         </article>
       {% endfor %}
     </div>
@@ -79,7 +84,7 @@
       <div class="field">
         <label for="score" class="label">Your score</label>
         <div class="control">
-            {{ form.score(autofocus=True, class="select")}}
+            {{ form.score(autofocus=False, class="select")}}
         </div>
       </div>
       <div class="field">

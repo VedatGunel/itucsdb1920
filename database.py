@@ -1,6 +1,7 @@
 from book import Book
 from user import User
 from review import Review
+import time
 import psycopg2 as dbapi2
 
 class Database:
@@ -141,8 +142,8 @@ class Database:
     def add_review(self, review):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "INSERT INTO REVIEW (SCORE, COMMENT, BOOKID, USERID) VALUES (%s, %s, %s, %s) RETURNING ID"
-            cursor.execute(query, (review.score, review.comment, review.book, review.author))
+            query = "INSERT INTO REVIEW (SCORE, COMMENT, BOOKID, USERID, DATEWRITTEN) VALUES (%s, %s, %s, %s, %s) RETURNING ID"
+            cursor.execute(query, (review.score, review.comment, review.book, review.author, time.strftime('%Y-%m-%d %H:%M')))
             connection.commit()
             review_id = cursor.fetchone()[0]
         return review_id
@@ -151,21 +152,21 @@ class Database:
         reviews = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "SELECT USERID, SCORE, COMMENT, ID FROM REVIEW WHERE (BOOKID = %s) ORDER BY ID"
+            query = "SELECT USERID, SCORE, COMMENT, ID, DATEWRITTEN FROM REVIEW WHERE (BOOKID = %s) ORDER BY ID"
             cursor.execute(query, (book_key,))
             connection.commit()           
-            for userid, score, comment, review_id in cursor:
+            for userid, score, comment, review_id, datewritten in cursor:
                 author = self.get_user_by_id(userid).username
-                reviews.append(Review(author, book_key, score, comment, review_id))
+                reviews.append(Review(author, book_key, score, comment, review_id, datewritten))
         return reviews
 
     def get_review(self, review_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT USERID, BOOKID, SCORE, COMMENT FROM REVIEW WHERE (ID = %s)"
+            query1 = "SELECT USERID, BOOKID, SCORE, COMMENT, DATEWRITTEN FROM REVIEW WHERE (ID = %s)"
             cursor.execute(query1, (review_id,))           
-            user_id, book_id, score, comment = cursor.fetchone()
-        review_ = Review(author=user_id, book=book_id, score=score, comment=comment, id=review_id)
+            user_id, book_id, score, comment, datewritten = cursor.fetchone()
+        review_ = Review(author=user_id, book=book_id, score=score, comment=comment, id=review_id, datewritten=datewritten)
         return review_
 
     def delete_review(self, review_id):
