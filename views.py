@@ -3,8 +3,9 @@ from passlib.hash import pbkdf2_sha256 as hasher
 
 from flask import abort, current_app, render_template, request, redirect, url_for, flash
 from book import Book
-from forms import BookEditForm, LoginForm, RegistrationForm
-from user import User, get_user
+from forms import BookEditForm, LoginForm, RegistrationForm, ReviewForm
+from user import User
+from review import Review
 from flask_login import login_user, logout_user, current_user, login_required
 
 def home_page():
@@ -28,11 +29,20 @@ def books_page():
 def book_page(book_key):
     db = current_app.config["db"]
     book = db.get_book(book_key)
+    reviews = db.get_reviews(book_key)
     if book is None:
         abort(404)
-    return render_template("book.html", book=book)
+    form = ReviewForm()
+    if form.validate_on_submit():
+        score = form.data["score"]
+        comment = form.data["comment"]
+        author = db.get_user_id(current_user.username)
+        review = Review(author=author, book=book_key, score=score, comment=comment)
+        review_id = db.add_review(review)
+        print(review_id)
+        return render_template("book.html", book=book, form=form, reviews=reviews)
+    return render_template("book.html", book=book, form=form, reviews=reviews)
 	
-
 @login_required
 def book_add_page():
     if not current_user.is_admin:
@@ -49,7 +59,6 @@ def book_add_page():
         book_key = db.add_book(book)
         return redirect(url_for("book_page", book_key=book_key))
     return render_template("book_edit.html", form=form)
-
 	
 @login_required
 def book_edit_page(book_key):
@@ -97,17 +106,33 @@ def validate_book_form(form):
     return len(form.errors) == 0
 
 def registration_page():
+    db = current_app.config["db"]
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash("Registration successful.", "success")
-        return redirect(url_for("home_page"))
+        username = form.data["username"]
+        email = form.data["email"]
+        user = db.get_user_by_username(username)
+        if user is None:
+            user = db.get_user_by_email(email)
+            if user is None:
+                password = hasher.hash(form.data["password"])
+                user = User(username, email=email, password=password)
+                db.add_user(user)
+                login_user(user)
+                flash("Registration successful.")
+                next_page = request.args.get("next", url_for("home_page"))
+                return redirect(next_page)
+            flash("E-mail is already in use.")
+            return render_template("register.html", form=form)
+        flash("Username already exists.")
     return render_template("register.html", form=form)
     	
 def login_page():
+    db = current_app.config["db"]
     form = LoginForm()
     if form.validate_on_submit():
         username = form.data["username"]
-        user = get_user(username)
+        user = db.get_user_by_username(username)
         if user is not None:
             password = form.data["password"]
             if hasher.verify(password, user.password):
@@ -117,8 +142,6 @@ def login_page():
                 return redirect(next_page)
         flash("Invalid credentials.")
     return render_template("login.html", form=form)
-
-
 
 def logout_page():
     logout_user()

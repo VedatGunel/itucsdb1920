@@ -34,7 +34,7 @@
       {% endif %}
     </table>
 
-    {% if current_user.is_authenticated %}
+   {% if current_user.is_authenticated %}
     <div class="field is-grouped">
       <div class="control">
         <a class="button is-primary is-outlined is-small"
@@ -42,4 +42,45 @@
       </div>
     </div>
     {% endif %}
+    {% if reviews %}
+    <h2 class="title">Reviews</h2>
+    {% endif %}
+    {% for review in reviews%}
+    <article class="media">
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong>{{ review.author }}</strong> <small>{{ review.score }}</small>
+              <br>
+              {{ review.comment }}
+            </p>
+          </div>
+        </div>
+        <div class="media-right">
+          <button class="delete"></button>
+        </div>
+      </article>
+    {% endfor %}
+    {% if current_user.is_authenticated %}
+    <form action="" method="POST" name="add_comment">
+      {{ form.hidden_tag() }}
+      <div class="field">
+        <label for="score" class="label">Your score</label>
+        <div class="control">
+            {{ form.score(autofocus=True, class="select")}}
+        </div>
+      </div>
+      <div class="field">
+          <label for="comment" class="label">Your comment</label>
+          <div class="control">
+              {{ form.comment(class="textarea")}}
+          </div>
+      </div>
+
+      <button class="button is-block is-info is-large is-fullwidth">
+          Submit
+        </button>
+    </form>
+    {% endif %}
+
 {% endblock %}
