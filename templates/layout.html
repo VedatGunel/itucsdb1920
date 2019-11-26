@@ -33,7 +33,7 @@
                 <span class="navbar-item">
                   <a class="button is-link" href="{{url_for('registration_page')}}">Register</a>
                 {% else %}
-                  {{ current_user.username }}
+                  <a class="is-link" href="{{ url_for('profile_page', user_id = current_user.id) }}">{{ current_user.username }}</a>
                   <a class="button is-link" href="{{ url_for('logout_page') }}">Log out</a>
                 {% endif %}
                 </span>

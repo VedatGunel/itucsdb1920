@@ -29,7 +29,7 @@ def books_page():
 def book_page(book_key):
     db = current_app.config["db"]
     book = db.get_book(book_key)
-    reviews = db.get_reviews(book_key)
+    reviews, user_ids = db.get_reviews(book_key)
     if book is None:
         abort(404)
     form = ReviewForm()
@@ -41,7 +41,7 @@ def book_page(book_key):
         review_id = db.add_review(review)
         print(review_id)
         return redirect(url_for("book_page", book_key = book_key))
-    return render_template("book.html", book=book, form=form, reviews=reviews)
+    return render_template("book.html", book=book, form=form, reviews=reviews, user_ids=user_ids)
 	
 @login_required
 def book_add_page():
@@ -155,3 +155,9 @@ def delete_review(review_id):
     if current_user.id == review_.author:
         db.delete_review(review_id)
     return redirect(url_for("book_page", book_key=review_.book))
+
+def profile_page(user_id=None):
+    db = current_app.config["db"]
+    user = db.get_user_by_id(user_id)
+    reviews = db.get_reviews_by_user(user.id)
+    return render_template("profile.html", user=user, reviews=reviews)

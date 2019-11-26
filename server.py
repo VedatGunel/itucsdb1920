@@ -15,6 +15,7 @@ def load_user(user_id):
 def create_app():
     app = Flask(__name__)
     app.config.from_object("settings")
+    app.add_template_global(name="zip", f=zip)
 
     app.add_url_rule("/", view_func=views.home_page)
     app.add_url_rule("/register", view_func=views.registration_page, methods=["GET", "POST"])
@@ -25,6 +26,7 @@ def create_app():
     app.add_url_rule("/books/<int:book_key>/edit", view_func=views.book_edit_page, methods=["GET", "POST"])
     app.add_url_rule("/new-book", view_func=views.book_add_page, methods=["GET", "POST"])
     app.add_url_rule("/reviews/<int:review_id>/delete", view_func=views.delete_review, methods=["GET", "POST"])
+    app.add_url_rule("/profile/<int:user_id>", view_func=views.profile_page)
 
     lm.init_app(app)
     lm.login_view = "login_page"    

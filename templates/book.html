@@ -49,12 +49,16 @@
   <section class="section">
     <div class="container">
       <h2 class="title">Reviews</h2>
-      {% for review in reviews%}
+      {% for review, user_id in zip(reviews, user_ids) %}
         <article class="media">
           <div class="media-content">
             <div class="content">
               <p class="is-size-4">
-                <strong class="is-size-4">{{ review.author }}</strong>
+                <strong class="is-size-4">
+                  <a class="is-link" href="{{ url_for('profile_page', user_id=user_id) }}">
+                    {{ review.author }}
+                  </a>
+                </strong>
                 <span class="icon"><i class="fas fa-star"></i></span>
                 <small class="is-size-4">{{ review.score }}/10</small>
                 <small class="is-size-6">{{review.datewritten.strftime('%Y-%m-%d %H:%M')}}</small>
