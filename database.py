@@ -76,46 +76,47 @@ class Database:
     def get_user_by_username(self, username):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "SELECT USERNAME, EMAIL, PASSWORD FROM BOOKWORM WHERE (USERNAME = %s)"
+            query = "SELECT ID, USERNAME, EMAIL, PASSWORD FROM BOOKWORM WHERE (USERNAME = %s)"
             cursor.execute(query, (username,))      
             try:
-                username, email, password = cursor.fetchone()
+                user_id, username, email, password = cursor.fetchone()
             except:
                 return None
-        user_ = User(username, email=email, password=password)
+        user_ = User(username, email=email, password=password, id=user_id)
         return user_
 
     def get_user_by_email(self, email):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "SELECT USERNAME, EMAIL, PASSWORD FROM BOOKWORM WHERE (EMAIL = %s)"
+            query = "SELECT ID, USERNAME, EMAIL, PASSWORD FROM BOOKWORM WHERE (EMAIL = %s)"
             cursor.execute(query, (email,))   
             try:
-                username, email, password = cursor.fetchone()
+                user_id, username, email, password = cursor.fetchone()
             except:
                 return None
-        user_ = User(username, email=email, password=password)
+        user_ = User(username, email=email, password=password, id=user_id)
         return user_
-    def get_username_by_id(self, user_id):
+    def get_user_by_id(self, user_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT USERNAME FROM BOOKWORM WHERE (ID = %s)"
+            query1 = "SELECT ID, USERNAME, EMAIL, PASSWORD FROM BOOKWORM WHERE (ID = %s)"
             cursor.execute(query1, (user_id,))           
             try:
-                username = cursor.fetchone()[0]
+                user_id, username, email, password = cursor.fetchone()
             except:
                 return None
-        return username
+            user_ = User(username, email=email, password=password, id=user_id)
+        return user_
     def get_user_id(self, username):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             query1 = "SELECT ID FROM BOOKWORM WHERE (USERNAME = %s)"
             cursor.execute(query1, (username,))           
             try:
-                id = cursor.fetchone()
+                user_id = cursor.fetchone()
             except:
                 return None
-        return id
+        return user_id
 
     def add_author(self, name):
         with dbapi2.connect(self.db_url) as connection:
@@ -140,7 +141,7 @@ class Database:
     def add_review(self, review):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "INSERT INTO RATING (SCORE, COMMENT, BOOKID, USERID) VALUES (%s, %s, %s, %s) RETURNING ID"
+            query = "INSERT INTO REVIEW (SCORE, COMMENT, BOOKID, USERID) VALUES (%s, %s, %s, %s) RETURNING ID"
             cursor.execute(query, (review.score, review.comment, review.book, review.author))
             connection.commit()
             review_id = cursor.fetchone()[0]
@@ -150,10 +151,10 @@ class Database:
         reviews = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "SELECT USERID, SCORE, COMMENT FROM RATING WHERE (BOOKID = %s) ORDER BY ID"
+            query = "SELECT USERID, SCORE, COMMENT, ID FROM REVIEW WHERE (BOOKID = %s) ORDER BY ID"
             cursor.execute(query, (book_key,))
             connection.commit()           
-            for userid, score, comment in cursor:
-                author = self.get_username_by_id(userid)
-                reviews.append(Review(author, book_key, score, comment))
+            for userid, score, comment, review_id in cursor:
+                author = self.get_user_by_id(userid).username
+                reviews.append(Review(author, book_key, score, comment, review_id))
         return reviews
