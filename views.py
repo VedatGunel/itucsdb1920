@@ -39,7 +39,7 @@ def book_page(book_key):
         author = db.get_user_id(current_user.username)
         review = Review(author=author, book=book_key, score=score, comment=comment)
         review_id = db.add_review(review)
-        print(review_id)
+        review.id = review_id
         return redirect(url_for("book_page", book_key = book_key))
     return render_template("book.html", book=book, form=form, reviews=reviews, user_ids=user_ids)
 	
@@ -153,7 +153,7 @@ def logout_page():
 def delete_review(review_id):
     db = current_app.config["db"]
     review_ = db.get_review(review_id)
-    if current_user.id == review_.author:
+    if current_user.id == review_.author or current_user.is_admin:
         db.delete_review(review_id)
     return redirect(url_for("book_page", book_key=review_.book))
 
