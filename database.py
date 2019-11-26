@@ -58,7 +58,8 @@ class Database:
             for tuple in cursor.fetchall():
                 avgscore += tuple[0]
                 count+=1
-            avgscore = avgscore / count
+            if count > 0:
+                avgscore = avgscore / count
         book_ = Book(title, author=author, genre=genre, year=year, pageNumber=pageNumber, avgscore=avgscore)
         return book_
 
