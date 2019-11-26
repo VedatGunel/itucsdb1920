@@ -158,3 +158,19 @@ class Database:
                 author = self.get_user_by_id(userid).username
                 reviews.append(Review(author, book_key, score, comment, review_id))
         return reviews
+
+    def get_review(self, review_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query1 = "SELECT USERID, BOOKID, SCORE, COMMENT FROM REVIEW WHERE (ID = %s)"
+            cursor.execute(query1, (review_id,))           
+            user_id, book_id, score, comment = cursor.fetchone()
+        review_ = Review(author=user_id, book=book_id, score=score, comment=comment, id=review_id)
+        return review_
+
+    def delete_review(self, review_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query1 = "DELETE FROM REVIEW WHERE (ID = %s)"
+            cursor.execute(query1, (review_id,))           
+            connection.commit()

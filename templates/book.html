@@ -61,7 +61,8 @@
             </div>
           </div>
           <div class="media-right">
-            <button class="delete">Delete</button>
+              <a class="delete"
+              href="{{ url_for('delete_review', review_id=review.id) }}"></a>
           </div>
         </article>
       {% endfor %}
