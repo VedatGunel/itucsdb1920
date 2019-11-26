@@ -12,7 +12,7 @@
       {% if book.avgscore %}
       <tr>
           <th>Score:</th>
-          <td>{{ book.avgscore }}</td>
+          <td>{{ book.avgscore|round(1) }}</td>
       </tr>
       {% endif %}
       {% if book.author %}
