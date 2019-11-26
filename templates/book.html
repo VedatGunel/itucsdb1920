@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 {% block title %}Book{% endblock %}
 {% block content %}
+<section class="section">
+  <div class="container">
     <h1 class="title">Book</h1>
-
     <table class="table">
       <tr>
         <th>Title:</th>
@@ -33,8 +34,7 @@
       </tr>
       {% endif %}
     </table>
-
-   {% if current_user.is_authenticated %}
+    {% if current_user.is_authenticated %}
     <div class="field is-grouped">
       <div class="control">
         <a class="button is-primary is-outlined is-small"
@@ -42,26 +42,37 @@
       </div>
     </div>
     {% endif %}
-    {% if reviews %}
-    <h2 class="title">Reviews</h2>
-    {% endif %}
-    {% for review in reviews%}
-    <article class="media">
-        <div class="media-content">
-          <div class="content">
-            <p>
-              <strong>{{ review.author }}</strong> <small>{{ review.score }}</small>
-              <br>
-              {{ review.comment }}
-            </p>
+  </div>
+</section>
+    
+{% if reviews %}
+  <section class="section">
+    <div class="container">
+      <h2 class="title">Reviews</h2>
+      {% for review in reviews%}
+        <article class="media">
+          <div class="media-content">
+            <div class="content">
+              <p>
+                <strong class="is-size-4">{{ review.author }}</strong> <span class="icon"><i class="fas fa-star"></i></span> <small class="is-size-4">{{ review.score }}/10</small>
+                <br>
+                {{ review.comment }}
+              </p>
+            </div>
           </div>
-        </div>
-        <div class="media-right">
-          <button class="delete"></button>
-        </div>
-      </article>
-    {% endfor %}
-    {% if current_user.is_authenticated %}
+          <div class="media-right">
+            <button class="delete">Delete</button>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}  
+ 
+{% if current_user.is_authenticated %}
+<section class="section">
+  <div class="container">
+    <h2 class="title">Write a review</h2>
     <form action="" method="POST" name="add_comment">
       {{ form.hidden_tag() }}
       <div class="field">
@@ -77,10 +88,13 @@
           </div>
       </div>
 
-      <button class="button is-block is-info is-large is-fullwidth">
+      <button class="button is-primary is-outlined is-small">
           Submit
         </button>
     </form>
-    {% endif %}
+  </div>
+</section>
+
+{% endif %}
 
 {% endblock %}
