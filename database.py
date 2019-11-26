@@ -51,7 +51,16 @@ class Database:
             query2 = "SELECT NAME FROM AUTHOR WHERE (ID = %s)"
             cursor.execute(query2, (author,))
             author = cursor.fetchone()[0]
-        book_ = Book(title, author=author, genre=genre, year=year, pageNumber=pageNumber)
+            query3 = "SELECT SCORE FROM REVIEW WHERE (BOOKID = %s)"
+            cursor.execute(query3, (book_key,))
+            count = 0
+            avgscore = 0
+
+            for tuple in cursor.fetchall():
+                avgscore += tuple[0]
+                count+=1
+            avgscore = avgscore / count
+        book_ = Book(title, author=author, genre=genre, year=year, pageNumber=pageNumber, avgscore=avgscore)
         return book_
 
     def get_books(self):

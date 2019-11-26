@@ -9,6 +9,12 @@
         <th>Title:</th>
         <td>{{ book.title }}</td>
       </tr>
+      {% if book.avgscore %}
+      <tr>
+          <th>Score:</th>
+          <td>{{ book.avgscore }}</td>
+      </tr>
+      {% endif %}
       {% if book.author %}
       <tr>
         <th>Author:</th>
