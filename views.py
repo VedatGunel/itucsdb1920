@@ -81,6 +81,7 @@ def book_edit_page(book_key):
     form.year.data = book.year if book.year else ""
     form.genre.data = book.genre if book.genre else ""
     form.pageNumber.data = book.pageNumber if book.pageNumber else ""
+    form.cover.data = book.cover if book.cover else ""
     return render_template("book_edit.html", form=form)
 
 def validate_book_form(form):
