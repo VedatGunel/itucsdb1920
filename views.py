@@ -137,10 +137,11 @@ def login_page():
     if form.validate_on_submit():
         username = form.data["username"]
         user = db.get_user_by_username(username)
+        remember = form.data["remember"]
         if user is not None:
             password = form.data["password"]
             if hasher.verify(password, user.password):
-                login_user(user)
+                login_user(user, remember=remember)
                 flash("You have logged in.")
                 next_page = request.args.get("next", url_for("home_page"))
                 return redirect(next_page)
