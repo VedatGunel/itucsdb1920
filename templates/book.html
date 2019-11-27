@@ -4,51 +4,68 @@
 <section class="section">
   <div class="container">
     <h1 class="title">Book</h1>
-    <table class="table">
-      <tr>
-        <th>Title:</th>
-        <td>{{ book.title }}</td>
-      </tr>
-      {% if book.avgscore %}
-      <tr>
-          <th>Score:</th>
-          <td>{{ book.avgscore|round(1) }}</td>
-      </tr>
-      {% endif %}
-      {% if book.author %}
-      <tr>
-        <th>Author:</th>
-        <td>{{ book.author }}</td>
-      </tr>
-      {% endif %}
-      {% if book.year %}
-      <tr>
-        <th>Year:</th>
-        <td>{{ book.year }}</td>
-      </tr>
-      {% endif %}
-      {% if book.genre %}
-      <tr>
-        <th>Genres:</th>
-        <td>{{ book.genre }}</td>
-      </tr>
-      {% endif %}
-      {% if book.pageNumber %}
-      <tr>
-        <th>Number of Pages:</th>
-        <td>{{ book.pageNumber }}</td>
-      </tr>
-      {% endif %}
-    </table>
-    {% if current_user.is_authenticated %}
-    <div class="field is-grouped">
-      <div class="control">
-        <a class="button is-primary is-outlined is-small"
-           href="{{ request.path }}/edit">Edit</a>
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+            <img src="{{ book.cover }}" width="112" height="40">
+        </div>
+        <div class="level-item">
+          <table class="table">
+              <tr>
+                <th>Title:</th>
+                <td>{{ book.title }}</td>
+              </tr>
+              {% if book.avgscore %}
+              <tr>
+                  <th>Score:</th>
+                  <td>{{ book.avgscore|round(1) }}/10</td>
+              </tr>
+              {% endif %}
+              {% if book.author %}
+              <tr>
+                <th>Author:</th>
+                <td>{{ book.author }}</td>
+              </tr>
+              {% endif %}
+              {% if book.year %}
+              <tr>
+                <th>Year:</th>
+                <td>{{ book.year }}</td>
+              </tr>
+              {% endif %}
+              {% if book.genre %}
+              <tr>
+                <th>Genres:</th>
+                <td>{{ book.genre }}</td>
+              </tr>
+              {% endif %}
+              {% if book.pageNumber %}
+              <tr>
+                <th>Number of Pages:</th>
+                <td>{{ book.pageNumber }}</td>
+              </tr>
+              {% endif %}
+            </table>
+          </div>
+      </div>
+    
+    </div>
+    <div class="level">
+      <div class="level-left">
+        {% if current_user.is_authenticated %}
+          <div class="level-item">
+            <a class="button is-warning is-outlined is-small"
+              href="{{ request.path }}/edit">Edit</a>
+          </div>
+        {% endif %}  
+        {% if current_user.is_admin %}
+          <div class="level-item">
+            <a class="button is-danger is-outlined is-small"
+                href="{{ request.path }}/delete">Delete</a>
+          </div>
+        {% endif %}
       </div>
     </div>
-    {% endif %}
-  </div>
 </section>
     
 {% if reviews %}
@@ -59,7 +76,7 @@
         <article class="media">
           <div class="media-content">
             <div class="content">
-              <p class="is-size-4">
+              <p class="is-size-6">
                 <strong class="is-size-4">
                   <a class="is-link" href="{{ url_for('profile_page', user_id=user_id) }}">
                     {{ review.author }}
