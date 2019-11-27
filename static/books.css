@@ -5,3 +5,7 @@ h1.title {
 footer {
     text-align: center;
 }
+
+.fullwidth{
+    width: 100%;
+}

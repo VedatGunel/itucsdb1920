@@ -1,34 +1,46 @@
 {% extends "layout.html" %}
 {% block title %}Books{% endblock %}
 {% block content %}
-    <h1>Books</h1>
+<div class="container">
+  <h1 class="title is-3">Books</h1>
 
-    {% if books %}
+  {% if books %}
     <form action="" method="post" name="movie_list">
-      <table class="table is-striped is-fullwidth">
+      <div class="columns">
         {% for book_key, book in books %}
-        <tr>
-          <td>
+        <div class="column is-2">
+          <div class="card has-equal-height has-text-centered">
+              <div class="card-image">
+                <figure class="image is-3by4">
+                  <img src="{{ book.cover }}" alt="Placeholder image">
+                </figure>
+              </div>
+              <div class="card-content">
+                <a class="title is-5" href="{{ url_for('book_page', book_key=book_key) }}">
+                {{ book.title }}</a>
+                <br>
+                <p class="subtitle is-6">{{ book.year }}</p>
+              </div>
               {% if current_user.is_admin %}
-              <label class="checkbox">
-                  <input type="checkbox" name="book_keys" value="{{ book_key }}"/>
-              </label>
+                <div class="card-footer">
+                  <div class="columns fullwidth is-gapless">
+                    <div class="column">
+                        <a class="button is-warning is-outlined fullwidth"
+                        href="{{ url_for('book_page', book_key=book_key) }}/edit">Edit</a>
+                    </div>
+                    <div class="column">
+                        <a class="button is-danger is-outlined fullwidth"
+                        href="{{ url_for('book_page', book_key=book_key) }}/delete">Delete</a>  
+                    </div>
+                  </div>          
+                </div>
               {% endif %}
-              <a href="{{ url_for('book_page', book_key=book_key) }}">
-                  {{ book.title }}
-                  {% if book.year %} ({{ book.year }}) {% endif %}
-              </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
-      {% if current_user.is_admin %}
-      <div class="field is-grouped">
-          <div class="control">
-            <button class="button is-danger is-small">Delete</button>
           </div>
+        </div>    
+        {% endfor %}
       </div>
-      {% endif %}
     </form>
-    {% endif %}
+  {% endif %}
+</div>
+
 {% endblock %}
