@@ -54,7 +54,8 @@ def book_add_page():
         year = form.data["year"]
         genre = form.data["genre"]
         pageNumber = form.data["pageNumber"]
-        book = Book(title, author=author, year=year, genre=genre, pageNumber=pageNumber)
+        cover = form.data["cover"]
+        book = Book(title, author=author, year=year, genre=genre, pageNumber=pageNumber, cover=cover)
         db = current_app.config["db"]
         book_key = db.add_book(book)
         return redirect(url_for("book_page", book_key=book_key))
@@ -71,7 +72,8 @@ def book_edit_page(book_key):
         year = form.data["year"]
         genre = form.data["genre"]
         pageNumber = form.data["pageNumber"]
-        book = Book(title, author=author, year=year, genre=genre, pageNumber=pageNumber)
+        cover = form.data["cover"]
+        book = Book(title, author=author, year=year, genre=genre, pageNumber=pageNumber, cover=cover)
         db.update_book(book_key, book)
         return redirect(url_for("book_page", book_key=book_key))
     form.title.data = book.title

@@ -19,6 +19,7 @@ class BookEditForm(FlaskForm):
     )
     genre = StringField("Genre", validators=[Optional()])
     pageNumber = IntegerField("Number of Pages", validators=[Optional(), NumberRange(min=0)])
+    cover = StringField("Cover Image", validators=[Optional()])
 
 class RegistrationForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(), Length(min=3, max=20)])

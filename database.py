@@ -16,8 +16,8 @@ class Database:
                     book.author = self.add_author(book.author)
                 else:
                     book.author = self.get_author(book.author)
-            query2 = "INSERT INTO BOOK (TITLE, AUTHORID, GENRE, YR, PGNUM) VALUES (%s, %s, %s, %s, %s) RETURNING ID"
-            cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber))
+            query2 = "INSERT INTO BOOK (TITLE, AUTHORID, GENRE, YR, PGNUM, COVER) VALUES (%s, %s, %s, %s, %s, %s) RETURNING ID"
+            cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover))
             connection.commit()
             book_key = cursor.fetchone()[0]
         return book_key
@@ -30,8 +30,8 @@ class Database:
                     book.author = self.add_author(book.author)
                 else:
                     book.author = self.get_author(book.author)
-            query2 = "UPDATE BOOK SET TITLE = %s, AUTHORID = %s, GENRE = %s, YR = %s, PGNUM = %s WHERE (ID = %s)"
-            cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book_key))
+            query2 = "UPDATE BOOK SET TITLE = %s, AUTHORID = %s, GENRE = %s, YR = %s, PGNUM = %s, COVER = %s WHERE (ID = %s)"
+            cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover, book_key))
             connection.commit()
 
     def delete_book(self, book_key):
@@ -44,9 +44,9 @@ class Database:
     def get_book(self, book_key):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT TITLE, AUTHORID, GENRE, YR, PGNUM FROM BOOK WHERE (ID = %s)"
+            query1 = "SELECT TITLE, AUTHORID, GENRE, YR, PGNUM, COVER FROM BOOK WHERE (ID = %s)"
             cursor.execute(query1, (book_key,))           
-            title, author, genre, year, pageNumber = cursor.fetchone()
+            title, author, genre, year, pageNumber, cover = cursor.fetchone()
             query2 = "SELECT NAME FROM AUTHOR WHERE (ID = %s)"
             cursor.execute(query2, (author,))
             author = cursor.fetchone()[0]
@@ -60,10 +60,10 @@ class Database:
         books = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT ID, TITLE, YR FROM BOOK ORDER BY ID"
+            query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK ORDER BY ID"
             cursor.execute(query1)
-            for book_key, title, year in cursor:
-                books.append((book_key, Book(title, year=year)))   
+            for book_key, title, year, cover in cursor:
+                books.append((book_key, Book(title, year=year, cover=cover)))   
         return books
     
 
@@ -99,6 +99,7 @@ class Database:
                 return None
         user_ = User(username, email=email, password=password, id=user_id)
         return user_
+        
     def get_user_by_id(self, user_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
@@ -110,6 +111,7 @@ class Database:
                 return None
             user_ = User(username, email=email, password=password, id=user_id)
         return user_
+
     def get_user_id(self, username):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
