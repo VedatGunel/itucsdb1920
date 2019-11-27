@@ -16,7 +16,7 @@
           <nav class="navbar is-danger" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
               <a class="navbar-item" href="{{ url_for('home_page') }}">
-                <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+                <img src="{{ url_for('static', filename='logo.png') }}" width="112" height="40">
               </a>
           
               <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -56,11 +56,12 @@
                   </div>
                 </div>
                 {% else %}
+                    <a class="navbar-item" href="{{ url_for('profile_page', user_id = current_user.id) }}">
+                      {{ current_user.username }}</a>
+     
                   <div class="navbar-item">
-                      <a class="is-link" href="{{ url_for('profile_page', user_id = current_user.id) }}">{{ current_user.username }}</a>
-                      <a class="button is-light" href="{{ url_for('logout_page') }}">Log out</a>
+                    <a class="button is-light" href="{{ url_for('logout_page') }}">Log out</a>
                   </div>
-                  
                 {% endif %}
               </div>
             </div>
