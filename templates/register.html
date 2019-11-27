@@ -11,10 +11,13 @@
                 {{ form.hidden_tag() }}
 
                 <div class="field">
-                  <div class="control">
+                  <div class="control has-icons-left">
                     {{ form.username(required=True, autofocus=True,
                                      class='input is-large',
                                      placeholder='your username') }}
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-user"></i>
+                    </span>
                   </div>
                   {% for error in form.username.errors %}
                     <p class="help has-background-warning">
@@ -23,10 +26,13 @@
                   {% endfor %}
                 </div>
                 <div class="field">
-                        <div class="control">
+                        <div class="control has-icons-left">
                           {{ form.email(required=True, autofocus=True,
                                            class='input is-large',
                                            placeholder='your email') }}
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                          </span>
                         </div>
                         {% for error in form.email.errors %}
                           <p class="help has-background-warning">
@@ -36,9 +42,12 @@
                       </div>
 
                 <div class="field">
-                  <div class="control">
+                  <div class="control has-icons-left">
                     {{ form.password(required=True, class='input is-large',
                                      placeholder='your password') }}
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-lock"></i>
+                    </span>   
                   </div>
                   {% for error in form.password.errors %}
                     <p class="help has-background-warning">
@@ -47,9 +56,12 @@
                   {% endfor %}
                 </div>
                 <div class="field">
-                        <div class="control">
+                        <div class="control has-icons-left">
                           {{ form.confirm_password(required=True, class='input is-large',
                                            placeholder='confirm password') }}
+                          <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                          </span>   
                         </div>
                         {% for error in form.confirm_password.errors %}
                           <p class="help has-background-warning">
