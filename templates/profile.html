@@ -1,16 +1,16 @@
 {% extends "layout.html" %}
 {% block title %}Profile{% endblock %}
 {% block content %}
-<h1 class="title">{{ user.username }}</h1>
     {% if reviews %}
     <section class="section">
       <div class="container">
+        <h1 class="title">{{ user.username }}</h1>
         <h2 class="title">Reviews</h2>
         {% for review, book in zip(reviews, books) %}
           <article class="media">
             <div class="media-content">
               <div class="content">
-                <p class="is-size-4">
+                <p class="is-size-6">
                   <strong class="is-size-4">
                     <a class="is-link" href="{{ url_for('book_page', book_key=review.book) }}">
                       {{ book }}
