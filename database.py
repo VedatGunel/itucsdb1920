@@ -19,10 +19,10 @@ class Database:
             query2 = "INSERT INTO BOOK (TITLE, AUTHORID, GENRE, YR, PGNUM, COVER) VALUES (%s, %s, %s, %s, %s, %s) RETURNING ID"
             cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover))
             connection.commit()
-            book_key = cursor.fetchone()[0]
-        return book_key
+            book_id = cursor.fetchone()[0]
+        return book_id
     
-    def update_book(self, book_key, book):
+    def update_book(self, book_id, book):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             if book.author is not None:
@@ -31,27 +31,27 @@ class Database:
                 else:
                     book.author = self.get_author(book.author)
             query2 = "UPDATE BOOK SET TITLE = %s, AUTHORID = %s, GENRE = %s, YR = %s, PGNUM = %s, COVER = %s WHERE (ID = %s)"
-            cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover, book_key))
+            cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover, book_id))
             connection.commit()
 
-    def delete_book(self, book_key):
+    def delete_book(self, book_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             query = "DELETE FROM BOOK WHERE (ID = %s)"
             cursor.execute(query, (book_key,))
             connection.commit()
 
-    def get_book(self, book_key):
+    def get_book(self, book_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             query1 = "SELECT TITLE, AUTHORID, GENRE, YR, PGNUM, COVER FROM BOOK WHERE (ID = %s)"
-            cursor.execute(query1, (book_key,))           
+            cursor.execute(query1, (book_id,))           
             title, author, genre, year, pageNumber, cover = cursor.fetchone()
             query2 = "SELECT NAME FROM AUTHOR WHERE (ID = %s)"
             cursor.execute(query2, (author,))
             author = cursor.fetchone()[0]
             query3 = "SELECT AVG(SCORE) FROM REVIEW WHERE (BOOKID = %s)"
-            cursor.execute(query3, (book_key,))
+            cursor.execute(query3, (book_id,))
             avgscore = cursor.fetchone()[0]
         book_ = Book(title, author=author, genre=genre, year=year, pageNumber=pageNumber, cover=cover, avgscore=avgscore)
         return book_
@@ -62,8 +62,7 @@ class Database:
             cursor = connection.cursor()
             query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK ORDER BY ID"
             cursor.execute(query1)
-            for book_key, title, year, cover in cursor:
-                books.append((book_key, Book(title, year=year, cover=cover)))   
+            for book_id, title, year, cover in cursor:
         return books
     
 
@@ -152,18 +151,18 @@ class Database:
             review_id = cursor.fetchone()[0]
         return review_id
 
-    def get_reviews(self, book_key):
+    def get_reviews(self, book_id):
         reviews = []
         user_ids = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             query = "SELECT USERID, SCORE, COMMENT, ID, DATEWRITTEN FROM REVIEW WHERE (BOOKID = %s) ORDER BY ID"
-            cursor.execute(query, (book_key,))
+            cursor.execute(query, (book_id,))
             connection.commit()
             for userid, score, comment, review_id, datewritten in cursor:
                 user_ids.append(userid)
                 author = self.get_user_by_id(userid).username
-                reviews.append(Review(author, book_key, score, comment, review_id, datewritten))
+                reviews.append(Review(author, book_id, score, comment, review_id, datewritten))
         return reviews, user_ids
     
     def get_reviews_by_user(self, user_id):

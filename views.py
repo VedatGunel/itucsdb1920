@@ -26,10 +26,10 @@ def books_page():
             db.delete_book(int(form_book_key))
         return redirect(url_for("books_page"))
 
-def book_page(book_key):
+def book_page(book_id):
     db = current_app.config["db"]
-    book = db.get_book(book_key)
-    reviews, user_ids = db.get_reviews(book_key)
+    book = db.get_book(book_id)
+    reviews, user_ids = db.get_reviews(book_id)
     if book is None:
         abort(404)
     form = ReviewForm()
@@ -37,10 +37,10 @@ def book_page(book_key):
         score = form.data["score"]
         comment = form.data["comment"]
         author = db.get_user_id(current_user.username)
-        review = Review(author=author, book=book_key, score=score, comment=comment)
+        review = Review(author=author, book=book_id, score=score, comment=comment)
         review_id = db.add_review(review)
         review.id = review_id
-        return redirect(url_for("book_page", book_key = book_key))
+        return redirect(url_for("book_page", book_id = book_id))
     return render_template("book.html", book=book, form=form, reviews=reviews, user_ids=user_ids)
 	
 @login_required
@@ -55,16 +55,16 @@ def book_add_page():
         genre = form.data["genre"]
         pageNumber = form.data["pageNumber"]
         cover = form.data["cover"]
-        book = Book(title, author=author, year=year, genre=genre, pageNumber=pageNumber, cover=cover)
+        book = Book(title=title, author=author, year=year, genre=genre, pageNumber=pageNumber, cover=cover)
         db = current_app.config["db"]
-        book_key = db.add_book(book)
-        return redirect(url_for("book_page", book_key=book_key))
+        book_id = db.add_book(book)
+        return redirect(url_for("book_page", book_id=book_id))
     return render_template("book_edit.html", form=form)
 	
 @login_required
-def book_edit_page(book_key):
+def book_edit_page(book_id):
     db = current_app.config["db"]
-    book = db.get_book(book_key)
+    book = db.get_book(book_id)
     form = BookEditForm()
     if form.validate_on_submit():
         title = form.data["title"]
