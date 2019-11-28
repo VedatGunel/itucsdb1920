@@ -97,11 +97,13 @@
           <div class="media-right">
               <div class="level">
                   <div class="level-left">
+                      {% if user_id == current_user.id %}
                       <div class="level-item">
                         <form action="{{ url_for('review_edit_page', review_id=review.id) }}" method="GET" name="edit_review">
                             <button class="button is-warning is-outlined is-small">Edit</button>
                         </form>
                       </div>
+                      {% endif %}
                       <div class="level-item">
                           <form action="{{url_for('delete_review', review_id=review.id)}}" method="POST" name="delete_review">
                           <input type="hidden", name="_method", value="DELETE">

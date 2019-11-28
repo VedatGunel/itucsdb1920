@@ -55,8 +55,12 @@ def book_add_page():
 	
 @login_required
 def book_edit_page(book_id):
+    if not current_user.is_admin:
+        abort(401)
     db = current_app.config["db"]
     book = db.get_book(book_id)
+    if book is None:
+        abort(404)
     form = BookEditForm()
     if form.validate_on_submit():
         title = form.data["title"]
@@ -76,33 +80,11 @@ def book_edit_page(book_id):
     form.cover.data = book.cover if book.cover else ""
     return render_template("book_edit.html", form=form)
 
-def validate_book_form(form):
-    form.data = {}
-    form.errors = {}
-
-    form_title = form.get("title", "").strip()
-    if len(form_title) == 0:
-        form.errors["title"] = "Title can not be blank."
-    else:
-        form.data["title"] = form_title
-
-    form_year = form.get("year")
-    if not form_year:
-        form.data["year"] = None
-    elif not form_year.isdigit():
-        form.errors["year"] = "Year must consist of digits only."
-    else:
-        year = int(form_year)
-        if (year < 0                       ) or (year > datetime.now().year):
-            form.errors["year"] = "Year not in valid range."
-        else:
-            form.data["year"] = year
-
-    return len(form.errors) == 0
-
 def registration_page():
     db = current_app.config["db"]
     form = RegistrationForm()
+    if(current_user.is_authenticated):
+        return redirect(url_for("home_page"))
     if form.validate_on_submit():
         username = form.data["username"]
         email = form.data["email"]
@@ -126,6 +108,8 @@ def registration_page():
 def login_page():
     db = current_app.config["db"]
     form = LoginForm()
+    if(current_user.is_authenticated):
+        return redirect(url_for("home_page"))
     if form.validate_on_submit():
         username = form.data["username"]
         user = db.get_user_by_username(username)
@@ -140,6 +124,7 @@ def login_page():
         flash("Invalid credentials.")
     return render_template("login.html", form=form)
 
+@login_required
 def logout_page():
     logout_user()
     flash("You have logged out.")
@@ -149,13 +134,20 @@ def logout_page():
 def delete_review(review_id):
     db = current_app.config["db"]
     review_ = db.get_review(review_id)
+    if review_ is None:
+        abort(404)
     if current_user.id == review_.author or current_user.is_admin:
         db.delete_review(review_id)
+    else:
+        abort(401)
     return redirect(url_for("book_page", book_id=review_.book))
 
 @login_required
 def delete_book(book_id):
     db = current_app.config["db"]
+    book = db.get_book_by_id(book_id)
+    if book is None:
+        abort(404)
     if current_user.is_admin:
         db.delete_book(int(book_id))
         flash("Book deleted successfully.")
@@ -163,7 +155,7 @@ def delete_book(book_id):
         flash("You don't have permission to delete the book.")
     return redirect(url_for("books_page"))
 
-def profile_page(user_id=None):
+def profile_page(user_id):
     db = current_app.config["db"]
     user = db.get_user_by_id(user_id)
     reviews, book_names = db.get_reviews_by_user(user.id)
@@ -173,6 +165,10 @@ def profile_page(user_id=None):
 def profile_edit_page(user_id):
     db = current_app.config["db"]
     user = db.get_user_by_id(user_id)
+    if user is None:
+        abort(404)
+    if not current_user.id == user_id:
+        abort(401)
     form = ProfileEditForm()
     if form.validate_on_submit():
         username = form.data["username"]
@@ -192,14 +188,25 @@ def profile_edit_page(user_id):
 @login_required
 def delete_profile(user_id):
     db = current_app.config["db"]
+    user = db.get_user_by_id(user_id)
+    if user is None:
+        abort(404)
     if current_user.is_admin or current_user.id == user_id:
+        logout_user()
         db.delete_user(int(user_id))
+        flash("User deleted successfully.")
+    else:
+        abort(401)
     return redirect(url_for("home_page"))
 
 @login_required
 def review_edit_page(review_id):
     db = current_app.config["db"]
     review = db.get_review(review_id)
+    if review is None:
+        abort(404)
+    if not current_user.id == review.author:
+        abort(401)
     form = ReviewForm()
     if form.validate_on_submit():
         score = form.data["score"]
