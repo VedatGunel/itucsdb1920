@@ -17,14 +17,7 @@ def books_page():
     db = current_app.config["db"]
     if request.method == "GET":
         books = db.get_books()
-        return render_template("books.html", books=sorted(books))
-    else:
-        if not current_user.is_admin:
-            abort(401)
-        form_book_keys = request.form.getlist("book_keys")
-        for form_book_key in form_book_keys:
-            db.delete_book(int(form_book_key))
-        return redirect(url_for("books_page"))
+        return render_template("books.html", books=books)
 
 def book_page(book_id):
     db = current_app.config["db"]
@@ -159,7 +152,18 @@ def delete_review(review_id):
     review_ = db.get_review(review_id)
     if current_user.id == review_.author or current_user.is_admin:
         db.delete_review(review_id)
-    return redirect(url_for("book_page", book_key=review_.book))
+    return redirect(url_for("book_page", book_id=review_.book))
+
+@login_required
+def delete_book(book_id):
+    db = current_app.config["db"]
+    if request.method == "GET":
+        print("Get")
+    else:
+        print("Post")
+    if current_user.is_admin:
+        db.delete_book(int(book_id))
+    return redirect(url_for("books_page"))
 
 def profile_page(user_id=None):
     db = current_app.config["db"]

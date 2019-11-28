@@ -26,7 +26,7 @@ def create_app():
     app.add_url_rule("/books/<int:book_id>/edit", view_func=views.book_edit_page, methods=["GET", "POST"])
     app.add_url_rule("/books/<int:book_id>/delete", view_func=views.delete_book, methods=["POST"])
     app.add_url_rule("/new-book", view_func=views.book_add_page, methods=["GET", "POST"])
-    app.add_url_rule("/reviews/<int:review_id>/delete", view_func=views.delete_review, methods=["GET", "POST"])
+    app.add_url_rule("/reviews/<int:review_id>/delete", view_func=views.delete_review, methods=["POST"])
     app.add_url_rule("/profile/<int:user_id>", view_func=views.profile_page)
 
     lm.init_app(app)
