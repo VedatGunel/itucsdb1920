@@ -196,6 +196,13 @@ class Database:
             cursor.execute(query1, (review_id,))           
             connection.commit()
 
+    def update_review(self, review):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query = "UPDATE REVIEW SET SCORE = %s, COMMENT = %s WHERE (ID = %s)"
+            cursor.execute(query, (review.score, review.comment, review.id))
+            connection.commit()
+
     def delete_user(self, user_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}
+Edit review
+{% endblock %}
+{% block content %}  
+  <section class="hero">
+    <div class="hero-body">
+			<div class="container has-text-centered">
+				<div class="column is-6 is-offset-4">
+					<h2 class="title">Edit review</h2>
+					<form action="" method="POST" name="add_review">
+							{{ form.hidden_tag() }}
+							<div class="field">
+								<label for="score" class="label">Your score</label>
+								<div class="control">
+										{{ form.score(autofocus=False, class="select")}}
+								</div>
+							</div>
+							<div class="field">
+									<label for="comment" class="label">Your comment</label>
+									<div class="control">
+											{{ form.comment(class="textarea")}}
+									</div>
+							</div>
+				
+							<button class="button is-primary is-outlined is-small">
+									Submit
+							</button>
+						</form>
+				</div>
+			</div>
+    </div>
+
+  </section>
+{% endblock %}

@@ -195,3 +195,22 @@ def delete_profile(user_id):
     if current_user.is_admin or current_user.id == user_id:
         db.delete_user(int(user_id))
     return redirect(url_for("home_page"))
+
+@login_required
+def review_edit_page(review_id):
+    db = current_app.config["db"]
+    review = db.get_review(review_id)
+    form = ReviewForm()
+    if form.validate_on_submit():
+        score = form.data["score"]
+        comment = form.data["comment"]
+        author = review.author
+        book_id = review.book
+        review_id = review.id
+        review_ = Review(score=score, comment=comment, author=author, book=book_id, id=review_id)
+        db.update_review(review_)
+        flash("Review updated successfully.")
+        return redirect(url_for("book_page", book_id=book_id))
+    form.score.data = str(review.score)
+    form.comment.data = review.comment
+    return render_template("review_edit.html", form=form)
