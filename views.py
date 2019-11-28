@@ -3,7 +3,7 @@ from passlib.hash import pbkdf2_sha256 as hasher
 
 from flask import abort, current_app, render_template, request, redirect, url_for, flash
 from book import Book
-from forms import BookEditForm, LoginForm, RegistrationForm, ReviewForm
+from forms import BookEditForm, LoginForm, RegistrationForm, ReviewForm, ProfileEditForm
 from user import User
 from review import Review
 from flask_login import login_user, logout_user, current_user, login_required
@@ -157,10 +157,6 @@ def delete_review(review_id):
 @login_required
 def delete_book(book_id):
     db = current_app.config["db"]
-    if request.method == "GET":
-        print("Get")
-    else:
-        print("Post")
     if current_user.is_admin:
         db.delete_book(int(book_id))
     return redirect(url_for("books_page"))
@@ -170,3 +166,30 @@ def profile_page(user_id=None):
     user = db.get_user_by_id(user_id)
     reviews, book_names = db.get_reviews_by_user(user.id)
     return render_template("profile.html", user=user, reviews=reviews, books=book_names, user_id=user_id)
+
+@login_required
+def profile_edit_page(user_id):
+    db = current_app.config["db"]
+    user = db.get_user_by_id(user_id)
+    form = ProfileEditForm()
+    if form.validate_on_submit():
+        username = form.data["username"]
+        email = form.data["email"]
+        password = hasher.hash(form.data["new_password"])
+        new_user = User(username=username, email=email, password=password)
+        if hasher.verify(form.data["old_password"], user.password):
+            db.update_user(user_id, new_user)
+            flash("User information updated successfully.")
+            return redirect(url_for("profile_page", user_id=user_id))
+        else:
+            flash("Old password is wrong.")
+    form.username.data = user.username
+    form.email.data = user.email
+    return render_template("register.html", form=form)
+
+@login_required
+def delete_profile(user_id):
+    db = current_app.config["db"]
+    if current_user.is_admin or current_user.id == user_id:
+        db.delete_user(int(user_id))
+    return redirect(url_for("home_page"))

@@ -195,3 +195,21 @@ class Database:
             query1 = "DELETE FROM REVIEW WHERE (ID = %s)"
             cursor.execute(query1, (review_id,))           
             connection.commit()
+
+    def delete_user(self, user_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query1 = "DELETE FROM BOOKWORM WHERE (ID = %s)"
+            cursor.execute(query1, (user_id,))           
+            connection.commit()
+
+    def update_user(self, user_id, user):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            if user.password is None:
+                query1 = "UPDATE BOOKWORM SET USERNAME = %s, EMAIL = %s WHERE (ID = %s)"
+                cursor.execute(query1, (user.username, user.email, user_id))
+            else:
+                query2 = "UPDATE BOOKWORM SET USERNAME = %s, EMAIL = %s, PASSWORD = %s WHERE (ID = %s)"
+                cursor.execute(query2, (user.username, user.email, user.password, user_id))
+            connection.commit()

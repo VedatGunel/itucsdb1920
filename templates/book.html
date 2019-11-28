@@ -95,8 +95,10 @@
           </div>
           {% if (user_id == current_user.id or current_user.is_admin) %}
           <div class="media-right">
-              <a class="delete"
-              href="{{ url_for('delete_review', review_id=review.id) }}"></a>
+              <form action="{{url_for('delete_review', review_id=review.id)}}" method="POST" name="delete_review">
+                  <input type="hidden", name="_method", value="DELETE">
+                  <button class="delete">Delete</button>
+              </form>
           </div>
           {% endif %}
         </article>

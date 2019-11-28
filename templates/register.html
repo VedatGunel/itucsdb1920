@@ -5,11 +5,14 @@
       <div class="hero-body">
         <div class="container has-text-centered">
           <div class="column is-4 is-offset-4">
-            <h3 class="title has-text-grey">Register</h3>
+            {% if form.username.data %}
+              <h3 class="title has-text-grey">Edit Profile</h3>
+            {% else %}
+              <h3 class="title has-text-grey">Register</h3>
+            {% endif %}
             <div class="box">
               <form action="" method="post" name="register">
                 {{ form.hidden_tag() }}
-
                 <div class="field">
                   <div class="control has-icons-left">
                     {{ form.username(required=True, autofocus=True,
@@ -39,25 +42,56 @@
                               {{ error }}
                           </p>
                         {% endfor %}
-                      </div>
-
-                <div class="field">
-                  <div class="control has-icons-left">
-                    {{ form.password(required=True, class='input is-large',
-                                     placeholder='your password') }}
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-lock"></i>
-                    </span>   
-                  </div>
-                  {% for error in form.password.errors %}
-                    <p class="help has-background-warning">
-                        {{ error }}
-                    </p>
-                  {% endfor %}
                 </div>
+                {% if form.username.data %}
+                  <div class="field">
+                      <div class="control has-icons-left">
+                        {{ form.old_password(class='input is-large',
+                                          placeholder='old password') }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>   
+                      </div>
+                      {% for error in form.old_password.errors %}
+                        <p class="help has-background-warning">
+                            {{ error }}
+                        </p>
+                      {% endfor %}
+                  </div>
+                  <div class="field">
+                      <div class="control has-icons-left">
+                        {{ form.new_password(class='input is-large',
+                                         placeholder='new password') }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>   
+                      </div>
+                      {% for error in form.new_password.errors %}
+                        <p class="help has-background-warning">
+                            {{ error }}
+                        </p>
+                      {% endfor %}
+                  </div>
+                {% else %}
+                  <div class="field">
+                      <div class="control has-icons-left">
+                        {{ form.password(required=True, class='input is-large',
+                                        placeholder='your password') }}
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>   
+                      </div>
+                      {% for error in form.password.errors %}
+                        <p class="help has-background-warning">
+                            {{ error }}
+                        </p>
+                      {% endfor %}
+                  </div>
+                {% endif %}
+                
                 <div class="field">
                         <div class="control has-icons-left">
-                          {{ form.confirm_password(required=True, class='input is-large',
+                          {{ form.confirm_password(class='input is-large',
                                            placeholder='confirm password') }}
                           <span class="icon is-small is-left">
                             <i class="fas fa-lock"></i>
@@ -69,9 +103,12 @@
                           </p>
                         {% endfor %}
                       </div>
-
                 <button class="button is-block is-info is-large is-fullwidth">
-                  Register
+                  {% if form.username.data %}
+                    Submit
+                  {% else %}
+                    Register
+                  {% endif %}
                 </button>
               </form>
             </div>
