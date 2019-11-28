@@ -5,7 +5,6 @@
   <h1 class="title is-3">Books</h1>
 
   {% if books %}
-    <form action="" method="post" name="movie_list">
       <div class="columns is-multiline">
         {% for book in books %}
         <div class="column is-2">
@@ -29,7 +28,7 @@
                         href="{{ url_for('book_page', book_id=book.id) }}/edit">Edit</a>
                     </div>
                     <div class="column">
-                      <form action="{{url_for('delete_book', book_id=book.id)}}" method="POST" name="delete_book">
+                      <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" name="delete_book">
                         <input type="hidden", name="_method", value="DELETE">
                         <button class="button is-danger is-outlined fullwidth">Delete</button>
                       </form> 
@@ -41,7 +40,6 @@
         </div>    
         {% endfor %}
       </div>
-    </form>
   {% endif %}
 </div>
 

@@ -15,9 +15,8 @@ def home_page():
 
 def books_page():
     db = current_app.config["db"]
-    if request.method == "GET":
-        books = db.get_books()
-        return render_template("books.html", books=books)
+    books = db.get_books()
+    return render_template("books.html", books=books)
 
 def book_page(book_id):
     db = current_app.config["db"]
@@ -159,6 +158,9 @@ def delete_book(book_id):
     db = current_app.config["db"]
     if current_user.is_admin:
         db.delete_book(int(book_id))
+        flash("Book deleted successfully.")
+    else:
+        flash("You don't have permission to delete the book.")
     return redirect(url_for("books_page"))
 
 def profile_page(user_id=None):
