@@ -9,3 +9,12 @@ footer {
 .fullwidth{
     width: 100%;
 }
+
+.card {
+    display:flex;
+    flex-direction: column;
+    height: 100%;
+}
+.card-content {
+    height:100%;
+}
