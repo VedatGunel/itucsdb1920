@@ -38,7 +38,7 @@ class Database:
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             query = "DELETE FROM BOOK WHERE (ID = %s)"
-            cursor.execute(query, (book_key,))
+            cursor.execute(query, (book_id,))
             connection.commit()
 
     def get_book(self, book_id):
@@ -53,7 +53,7 @@ class Database:
             query3 = "SELECT AVG(SCORE) FROM REVIEW WHERE (BOOKID = %s)"
             cursor.execute(query3, (book_id,))
             avgscore = cursor.fetchone()[0]
-        book_ = Book(title, author=author, genre=genre, year=year, pageNumber=pageNumber, cover=cover, avgscore=avgscore)
+        book_ = Book(id=book_id, title=title, author=author, genre=genre, year=year, pageNumber=pageNumber, cover=cover, avgscore=avgscore)
         return book_
 
     def get_books(self):
@@ -63,6 +63,7 @@ class Database:
             query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK ORDER BY ID"
             cursor.execute(query1)
             for book_id, title, year, cover in cursor:
+                books.append(Book(id=book_id, title=title, year=year, cover=cover))   
         return books
     
 

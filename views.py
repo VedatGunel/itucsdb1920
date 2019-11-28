@@ -73,9 +73,9 @@ def book_edit_page(book_id):
         genre = form.data["genre"]
         pageNumber = form.data["pageNumber"]
         cover = form.data["cover"]
-        book = Book(title, author=author, year=year, genre=genre, pageNumber=pageNumber, cover=cover)
-        db.update_book(book_key, book)
-        return redirect(url_for("book_page", book_key=book_key))
+        book = Book(title=title, author=author, year=year, genre=genre, pageNumber=pageNumber, cover=cover)
+        db.update_book(book_id, book)
+        return redirect(url_for("book_page", book_id=book_id))
     form.title.data = book.title
     form.author.data = book.author if book.author else ""
     form.year.data = book.year if book.year else ""
