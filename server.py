@@ -14,6 +14,7 @@ def load_user(user_id):
 
 def create_app():
     app = Flask(__name__)
+    
     app.config.from_object("settings")
     app.add_template_global(name="zip", f=zip)
 
@@ -31,7 +32,7 @@ def create_app():
     app.add_url_rule("/profile/<int:user_id>", view_func=views.profile_page)
     app.add_url_rule("/profile/<int:user_id>/edit", view_func=views.profile_edit_page, methods=["GET", "POST"])
     app.add_url_rule("/profile/<int:user_id>/delete", view_func=views.delete_profile, methods=["POST"])
-
+    app.add_url_rule("/search", view_func=views.search_page, methods=["GET"])
     lm.init_app(app)
     lm.login_view = "login_page"    
 
@@ -40,6 +41,7 @@ def create_app():
 
     return app
 
+  
 if __name__ == "__main__":
     app = create_app()
     port = app.config.get("PORT", 5000)

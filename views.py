@@ -3,22 +3,26 @@ from passlib.hash import pbkdf2_sha256 as hasher
 
 from flask import abort, current_app, render_template, request, redirect, url_for, flash
 from book import Book
-from forms import BookEditForm, LoginForm, RegistrationForm, ReviewForm, ProfileEditForm
+from forms import BookEditForm, LoginForm, RegistrationForm, ReviewForm, ProfileEditForm, SearchForm
 from user import User
 from review import Review
 from flask_login import login_user, logout_user, current_user, login_required
 
+
 def home_page():
+    searchform=SearchForm()
     today = datetime.today()
     day_name = today.strftime("%A")
-    return render_template("home.html", day=day_name)
+    return render_template("home.html", day=day_name, searchform=searchform)
 
 def books_page():
+    searchform=SearchForm()
     db = current_app.config["db"]
     books = db.get_books()
-    return render_template("books.html", books=books)
+    return render_template("books.html", books=books, searchform=searchform)
 
 def book_page(book_id):
+    searchform=SearchForm()
     db = current_app.config["db"]
     book = db.get_book(book_id)
     reviews, user_ids = db.get_reviews(book_id)
@@ -33,10 +37,11 @@ def book_page(book_id):
         review_id = db.add_review(review)
         review.id = review_id
         return redirect(url_for("book_page", book_id = book_id))
-    return render_template("book.html", book=book, form=form, reviews=reviews, user_ids=user_ids)
+    return render_template("book.html", book=book, form=form, reviews=reviews, user_ids=user_ids, searchform=searchform)
 	
 @login_required
 def book_add_page():
+    searchform=SearchForm()
     if not current_user.is_admin:
         abort(401)
     form = BookEditForm()
@@ -51,10 +56,11 @@ def book_add_page():
         db = current_app.config["db"]
         book_id = db.add_book(book)
         return redirect(url_for("book_page", book_id=book_id))
-    return render_template("book_edit.html", form=form)
+    return render_template("book_edit.html", form=form, searchform=searchform)
 	
 @login_required
 def book_edit_page(book_id):
+    searchform=SearchForm()
     if not current_user.is_admin:
         abort(401)
     db = current_app.config["db"]
@@ -78,9 +84,10 @@ def book_edit_page(book_id):
     form.genre.data = book.genre if book.genre else ""
     form.pageNumber.data = book.pageNumber if book.pageNumber else ""
     form.cover.data = book.cover if book.cover else ""
-    return render_template("book_edit.html", form=form)
+    return render_template("book_edit.html", form=form, searchform=searchform)
 
 def registration_page():
+    searchform = SearchForm()
     db = current_app.config["db"]
     form = RegistrationForm()
     if(current_user.is_authenticated):
@@ -101,11 +108,12 @@ def registration_page():
                 next_page = request.args.get("next", url_for("home_page"))
                 return redirect(next_page)
             flash("E-mail is already in use.")
-            return render_template("register.html", form=form)
+            return render_template("register.html", form=form, searchform=searchform)
         flash("Username already exists.")
-    return render_template("register.html", form=form)
+    return render_template("register.html", form=form, searchform=searchform)
     	
 def login_page():
+    searchform=SearchForm()
     db = current_app.config["db"]
     form = LoginForm()
     if(current_user.is_authenticated):
@@ -122,7 +130,7 @@ def login_page():
                 next_page = request.args.get("next", url_for("home_page"))
                 return redirect(next_page)
         flash("Invalid credentials.")
-    return render_template("login.html", form=form)
+    return render_template("login.html", form=form, searchform=searchform)
 
 @login_required
 def logout_page():
@@ -156,13 +164,15 @@ def delete_book(book_id):
     return redirect(url_for("books_page"))
 
 def profile_page(user_id):
+    searchform=SearchForm()
     db = current_app.config["db"]
     user = db.get_user_by_id(user_id)
     reviews, book_names = db.get_reviews_by_user(user.id)
-    return render_template("profile.html", user=user, reviews=reviews, books=book_names, user_id=user_id)
+    return render_template("profile.html", user=user, reviews=reviews, books=book_names, user_id=user_id, searchform=searchform)
 
 @login_required
 def profile_edit_page(user_id):
+    searchform=SearchForm()
     db = current_app.config["db"]
     user = db.get_user_by_id(user_id)
     if user is None:
@@ -183,7 +193,7 @@ def profile_edit_page(user_id):
             flash("Old password is wrong.")
     form.username.data = user.username
     form.email.data = user.email
-    return render_template("register.html", form=form)
+    return render_template("register.html", form=form, searchform=searchform)
 
 @login_required
 def delete_profile(user_id):
@@ -201,6 +211,7 @@ def delete_profile(user_id):
 
 @login_required
 def review_edit_page(review_id):
+    searchform=SearchForm()
     db = current_app.config["db"]
     review = db.get_review(review_id)
     if review is None:
@@ -220,4 +231,11 @@ def review_edit_page(review_id):
         return redirect(url_for("book_page", book_id=book_id))
     form.score.data = str(review.score)
     form.comment.data = review.comment
-    return render_template("review_edit.html", form=form)
+    return render_template("review_edit.html", form=form, searchform=searchform)
+    
+def search_page():
+    db = current_app.config["db"]
+    form = SearchForm()
+    print(form.query.data)
+    books = db.get_books(request.args.get("query"))
+    return render_template("books.html", books=books, searchform=form, search_page=True)

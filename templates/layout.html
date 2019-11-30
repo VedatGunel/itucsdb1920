@@ -41,6 +41,25 @@
                   Add Book
                 </a>
                 {% endif %}
+                <div class="navbar-item field">
+                  <div class="control">
+                      <form action="{{url_for('search_page')}}" method="GET" name="search">
+                        <div class="level">
+                          <div class="level-item">
+                            {{searchform.query(class="input", placeholder="Search...")}}
+                          </div>
+                          <div class="level-item">
+                            <button type="submit" class="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                          </div>
+                        </div>
+                        
+
+                      </form>
+                  </div>
+
+                </div>
 
               </div>
               <div class="navbar-end">

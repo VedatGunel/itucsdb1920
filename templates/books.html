@@ -2,7 +2,11 @@
 {% block title %}Books{% endblock %}
 {% block content %}
 <div class="container">
-  <h1 class="title is-3">Books</h1>
+  {% if search_page %}
+    <h1 class="title is-3">Search Results</h1>
+  {% else %}
+    <h1 class="title is-3">Books</h1>
+  {% endif %}
 
   {% if books %}
       <div class="columns is-multiline">
@@ -40,6 +44,9 @@
         </div>    
         {% endfor %}
       </div>
+  
+  {% else %}
+  <p class="is-size-5">Nothing was found.</p>
   {% endif %}
 </div>
 

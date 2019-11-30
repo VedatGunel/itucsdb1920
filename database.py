@@ -56,12 +56,17 @@ class Database:
         book_ = Book(id=book_id, title=title, author=author, genre=genre, year=year, pageNumber=pageNumber, cover=cover, avgscore=avgscore)
         return book_
 
-    def get_books(self):
+    def get_books(self, query=None):
         books = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK ORDER BY ID"
-            cursor.execute(query1)
+            if query:
+                query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK WHERE TITLE LIKE %s ORDER BY ID"
+                like_pattern = '%{}%'.format(query)
+                cursor.execute(query1, (like_pattern,))
+            else:
+                query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK ORDER BY ID"
+                cursor.execute(query1)
             for book_id, title, year, cover in cursor:
                 books.append(Book(id=book_id, title=title, year=year, cover=cover))   
         return books
