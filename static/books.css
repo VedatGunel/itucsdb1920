@@ -6,7 +6,7 @@ footer {
     text-align: center;
 }
 
-.fullwidth{
+.fullwidth {
     width: 100%;
 }
 
@@ -18,3 +18,13 @@ footer {
 .card-content {
     height:100%;
 }
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+#wrapper {
+    flex: 1;
+  }
