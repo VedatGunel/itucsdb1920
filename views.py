@@ -231,6 +231,22 @@ def delete_profile(user_id):
     return redirect(url_for("home_page"))
 
 @login_required
+def delete_profile_picture(user_id):
+    db = current_app.config["db"]
+    user = db.get_user_by_id(user_id)
+    if user is None:
+        abort(404)
+    if current_user.id == user_id:
+        db.delete_profile_picture(int(user_id))
+        os.remove(os.path.join(
+            current_app.root_path, 'static/profile_pictures', user.profile_picture
+            ))
+        flash("Profile picture deleted successfully.")
+    else:
+        abort(401)
+    return redirect(url_for("home_page"))
+
+@login_required
 def review_edit_page(review_id):
     searchform=SearchForm()
     db = current_app.config["db"]

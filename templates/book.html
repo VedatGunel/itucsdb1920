@@ -139,32 +139,41 @@
   </section>
 {% endif %}  
  
-{% if current_user.is_authenticated %}
+
 <section class="section">
   <div class="container">
     <h2 class="title">Write a review</h2>
-    <form action="" method="POST" name="add_review">
-      {{ form.hidden_tag() }}
-      <div class="field">
-        <label for="score" class="label">Your score</label>
-        <div class="control">
-            {{ form.score(autofocus=False, class="select")}}
-        </div>
-      </div>
-      <div class="field">
-          <label for="comment" class="label">Your comment</label>
+    {% if current_user.is_authenticated %}
+      <form action="" method="POST" name="add_review">
+        {{ form.hidden_tag() }}
+        <div class="field">
+          <label for="score" class="label">Your score</label>
           <div class="control">
-              {{ form.comment(class="textarea")}}
+              {{ form.score(autofocus=False, class="select")}}
           </div>
-      </div>
+        </div>
+        <div class="field">
+            <label for="comment" class="label">Your comment</label>
+            <div class="control">
+                {{ form.comment(class="textarea")}}
+            </div>
+        </div>
 
-      <button class="button is-primary is-outlined is-small">
-          Submit
-        </button>
-    </form>
+        <button class="button is-primary is-outlined is-small">
+            Submit
+          </button>
+      </form>
+    {% else %}
+      <p>Please  <a href="{{url_for('registration_page')}}">
+          <strong>Register</strong>
+        </a> or 
+        <a href="{{url_for('login_page')}}">
+            <strong>Login</strong>
+          </a> to write a review.</p>
+    {% endif %}
   </div>
 </section>
 
-{% endif %}
+
 
 {% endblock %}

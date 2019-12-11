@@ -226,3 +226,10 @@ class Database:
             query2 = "UPDATE BOOKWORM SET USERNAME = %s, EMAIL = %s, PASSWORD = COALESCE(%s, PASSWORD), PROFILEPICTURE = COALESCE(%s, PROFILEPICTURE) WHERE (ID = %s)"
             cursor.execute(query2, (user.username, user.email, user.password, user.profile_picture, user_id))
             connection.commit()
+    
+    def delete_profile_picture(self, user_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query2 = "UPDATE BOOKWORM SET PROFILEPICTURE = NULL WHERE (ID = %s)"
+            cursor.execute(query2, (user_id,))
+            connection.commit()
