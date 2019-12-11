@@ -4,71 +4,87 @@
     
     <section class="section">
       <div class="container">
-        <h1 class="title">{{ user.username }}</h1>                
-          <div class="level">
-            <div class="level-left"> 
-              {% if user_id == current_user.id %}              
-              <div class="level-item">
-                <form action="{{ request.path }}/edit" method="GET" name="edit_user">
-                    <button class="button is-warning is-outlined is-small">Edit</button>
-                </form>
-              </div>
-              {% endif %}
-              {% if (user_id == current_user.id or current_user.is_admin) %}
-                <div class="level-item">
-                  <form action="{{url_for('delete_profile', user_id=user_id)}}" method="POST" name="delete_user">
-                    <input type="hidden", name="_method", value="DELETE">
-                    <button class="button is-danger is-outlined is-small">Delete</button>
-                  </form>
-                </div>
-              {% endif %}
-            </div>
-          </div>        
-        
-        {% if reviews %}
-          <h2 class="title">Reviews</h2>
-          {% for review, book in zip(reviews, books) %}
-            <article class="media">
-              <div class="media-content">
-                <div class="content">
-                  <p class="is-size-6">
-                    <strong class="is-size-4">
-                      <a class="is-link" href="{{ url_for('book_page', book_id=review.book) }}">
-                        {{ book }}
-                      </a>
-                    </strong>
-                    <span class="icon"><i class="fas fa-star"></i></span>
-                    <small class="is-size-4">{{ review.score }}/10</small>
-                    <small class="is-size-6">{{review.datewritten.strftime('%Y-%m-%d %H:%M')}}</small>
-                    <br>
-                    {{ review.comment }}
-                  </p>
-                </div>
-              </div>
-              {% if (user_id == current_user.id or current_user.is_admin) %}
-                <div class="media-right">
-                    <div class="level">
-                        <div class="level-left">
-                            {% if user_id == current_user.id %}
-                            <div class="level-item">
-                              <form action="{{ url_for('review_edit_page', review_id=review.id) }}" method="GET" name="edit_review">
-                                  <button class="button is-warning is-outlined is-small">Edit</button>
-                              </form>
-                            </div>
-                            {% endif %}
-                            <div class="level-item">
-                                <form action="{{url_for('delete_review', review_id=review.id)}}" method="POST" name="delete_review">
-                                <input type="hidden", name="_method", value="DELETE">
-                                <button class="button is-danger is-outlined is-small">Delete</button>
-                              </form>
-                            </div>
-                        </div>
+        <h1 class="title">{{ user.username }}</h1> 
+        <div class="columns">
+          <div class="column is-3">
+              <figure class="image is-3by4">
+                {% if user.profile_picture %}
+                  <img src="{{ url_for('static', filename='profile_pictures/' + user.profile_picture) }}">
+                {% else %}
+                  <img src="{{ url_for('static', filename='profile_pictures/' + 'default.png') }}">
+                {% endif %}
+              </figure>  
+              <div class="level">
+                  <div class="level-left"> 
+                    {% if user_id == current_user.id %}              
+                    <div class="level-item">
+                      <form action="{{ request.path }}/edit" method="GET" name="edit_user">
+                          <button class="button is-warning is-outlined is-small">Edit</button>
+                      </form>
+                    </div>
+                    {% endif %}
+                    {% if (user_id == current_user.id or current_user.is_admin) %}
+                      <div class="level-item">
+                        <form action="{{url_for('delete_profile', user_id=user_id)}}" method="POST" name="delete_user">
+                          <input type="hidden", name="_method", value="DELETE">
+                          <button class="button is-danger is-outlined is-small">Delete</button>
+                        </form>
                       </div>
-                </div>
-              {% endif %}
-            </article>
-          {% endfor %}
-        {% endif %}  
+                    {% endif %}
+                  </div>
+                </div>              
+          </div>
+          <div class="column is-9">
+            <h2 class="title">Reviews</h2>
+            {% if reviews %}
+              {% for review, book in zip(reviews, books) %}
+                <article class="media">
+                  <div class="media-content">
+                    <div class="content">
+                      <p class="is-size-6">
+                        <strong class="is-size-4">
+                          <a class="is-link" href="{{ url_for('book_page', book_id=review.book) }}">
+                            {{ book }}
+                          </a>
+                        </strong>
+                        <span class="icon"><i class="fas fa-star"></i></span>
+                        <small class="is-size-4">{{ review.score }}/10</small>
+                        <small class="is-size-6">{{review.datewritten.strftime('%Y-%m-%d %H:%M')}}</small>
+                        <br>
+                        {{ review.comment }}
+                      </p>
+                    </div>
+                  </div>
+                  {% if (user_id == current_user.id or current_user.is_admin) %}
+                    <div class="media-right">
+                        <div class="level">
+                            <div class="level-left">
+                                {% if user_id == current_user.id %}
+                                <div class="level-item">
+                                  <form action="{{ url_for('review_edit_page', review_id=review.id) }}" method="GET" name="edit_review">
+                                      <button class="button is-warning is-outlined is-small">Edit</button>
+                                  </form>
+                                </div>
+                                {% endif %}
+                                <div class="level-item">
+                                    <form action="{{url_for('delete_review', review_id=review.id)}}" method="POST" name="delete_review">
+                                    <input type="hidden", name="_method", value="DELETE">
+                                    <button class="button is-danger is-outlined is-small">Delete</button>
+                                  </form>
+                                </div>
+                            </div>
+                          </div>
+                    </div>
+                  {% endif %}
+                </article>
+              {% endfor %}
+            {% endif %}  
+          </div>
+        </div>
+        
+              
+        
+        
       </div>
     </section>  
 {% endblock %}

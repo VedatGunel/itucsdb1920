@@ -7,7 +7,8 @@ from forms import BookEditForm, LoginForm, RegistrationForm, ReviewForm, Profile
 from user import User
 from review import Review
 from flask_login import login_user, logout_user, current_user, login_required
-
+from werkzeug.utils import secure_filename
+import os
 
 def home_page():
     searchform=SearchForm()
@@ -96,11 +97,20 @@ def registration_page():
         username = form.data["username"]
         email = form.data["email"]
         user = db.get_user_by_username(username)
+        profile_picture = form.data["profile_picture"]
         if user is None:
             user = db.get_user_by_email(email)
             if user is None:
                 password = hasher.hash(form.data["password"])
-                user = User(username, email=email, password=password)
+                filename = None
+                if profile_picture:
+                    filename = secure_filename(profile_picture.filename)
+                    _, f_ext = os.path.splitext(filename)
+                    filename = username + f_ext
+                    profile_picture.save(os.path.join(
+                    current_app.root_path, 'static/profile_pictures', filename
+                    ))
+                user = User(username, email=email, password=password, profile_picture=filename)
                 db.add_user(user)
                 user = db.get_user_by_username(username)
                 login_user(user)
@@ -110,7 +120,7 @@ def registration_page():
             flash("E-mail is already in use.")
             return render_template("register.html", form=form, searchform=searchform)
         flash("Username already exists.")
-    return render_template("register.html", form=form, searchform=searchform)
+    return render_template("register.html", form=form, edit_profile=False, searchform=searchform)
     	
 def login_page():
     searchform=SearchForm()
@@ -183,9 +193,20 @@ def profile_edit_page(user_id):
     if form.validate_on_submit():
         username = form.data["username"]
         email = form.data["email"]
-        password = hasher.hash(form.data["new_password"])
-        new_user = User(username=username, email=email, password=password)
-        if hasher.verify(form.data["old_password"], user.password):
+        password = None
+        if form.data["old_password"]:
+            password = hasher.hash(form.data["new_password"])
+        profile_picture = form.data["profile_picture"]
+        filename = None
+        if profile_picture:
+            filename = secure_filename(profile_picture.filename)
+            _, f_ext = os.path.splitext(filename)
+            filename = username + f_ext
+            profile_picture.save(os.path.join(
+            current_app.root_path, 'static/profile_pictures', filename
+            ))
+        new_user = User(username=username, email=email, password=password, profile_picture=filename)
+        if (form.data["old_password"] and hasher.verify(form.data["old_password"], user.password)) or (not form.data["old_password"] and not form.data["new_password"]):
             db.update_user(user_id, new_user)
             flash("User information updated successfully.")
             return redirect(url_for("profile_page", user_id=user_id))
@@ -193,7 +214,7 @@ def profile_edit_page(user_id):
             flash("Old password is wrong.")
     form.username.data = user.username
     form.email.data = user.email
-    return render_template("register.html", form=form, searchform=searchform)
+    return render_template("register.html", form=form, edit_profile=True, searchform=searchform)
 
 @login_required
 def delete_profile(user_id):

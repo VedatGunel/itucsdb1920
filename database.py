@@ -75,8 +75,8 @@ class Database:
     def add_user(self, user):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "INSERT INTO BOOKWORM (USERNAME, EMAIL, PASSWORD) VALUES (%s, %s, %s) RETURNING ID"
-            cursor.execute(query, (user.username, user.email, user.password))
+            query = "INSERT INTO BOOKWORM (USERNAME, EMAIL, PASSWORD, PROFILEPICTURE) VALUES (%s, %s, %s, %s) RETURNING ID"
+            cursor.execute(query, (user.username, user.email, user.password, user.profile_picture))
             connection.commit()
             user_key = cursor.fetchone()[0]
         return user_key
@@ -84,37 +84,37 @@ class Database:
     def get_user_by_username(self, username):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "SELECT ID, USERNAME, EMAIL, PASSWORD FROM BOOKWORM WHERE (USERNAME = %s)"
+            query = "SELECT ID, USERNAME, EMAIL, PASSWORD, PROFILEPICTURE FROM BOOKWORM WHERE (USERNAME = %s)"
             cursor.execute(query, (username,))      
             try:
-                user_id, username, email, password = cursor.fetchone()
+                user_id, username, email, password, profile_picture = cursor.fetchone()
             except:
                 return None
-        user_ = User(username, email=email, password=password, id=user_id)
+        user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture)
         return user_
 
     def get_user_by_email(self, email):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "SELECT ID, USERNAME, EMAIL, PASSWORD FROM BOOKWORM WHERE (EMAIL = %s)"
+            query = "SELECT ID, USERNAME, EMAIL, PASSWORD, PROFILEPICTURE FROM BOOKWORM WHERE (EMAIL = %s)"
             cursor.execute(query, (email,))   
             try:
-                user_id, username, email, password = cursor.fetchone()
+                user_id, username, email, password, profile_picture = cursor.fetchone()
             except:
                 return None
-        user_ = User(username, email=email, password=password, id=user_id)
+        user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture)
         return user_
         
     def get_user_by_id(self, user_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT ID, USERNAME, EMAIL, PASSWORD FROM BOOKWORM WHERE (ID = %s)"
+            query1 = "SELECT ID, USERNAME, EMAIL, PASSWORD, PROFILEPICTURE FROM BOOKWORM WHERE (ID = %s)"
             cursor.execute(query1, (user_id,))           
             try:
-                user_id, username, email, password = cursor.fetchone()
+                user_id, username, email, password, profile_picture = cursor.fetchone()
             except:
                 return None
-            user_ = User(username, email=email, password=password, id=user_id)
+            user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture)
         return user_
 
     def get_user_id(self, username):
@@ -218,10 +218,6 @@ class Database:
     def update_user(self, user_id, user):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            if user.password is None:
-                query1 = "UPDATE BOOKWORM SET USERNAME = %s, EMAIL = %s WHERE (ID = %s)"
-                cursor.execute(query1, (user.username, user.email, user_id))
-            else:
-                query2 = "UPDATE BOOKWORM SET USERNAME = %s, EMAIL = %s, PASSWORD = %s WHERE (ID = %s)"
-                cursor.execute(query2, (user.username, user.email, user.password, user_id))
+            query2 = "UPDATE BOOKWORM SET USERNAME = %s, EMAIL = %s, PASSWORD = COALESCE(%s, PASSWORD), PROFILEPICTURE = COALESCE(%s, PROFILEPICTURE) WHERE (ID = %s)"
+            cursor.execute(query2, (user.username, user.email, user.password, user.profile_picture, user_id))
             connection.commit()

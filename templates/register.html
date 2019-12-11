@@ -5,13 +5,13 @@
       <div class="hero-body">
         <div class="container has-text-centered">
           <div class="column is-4 is-offset-4">
-            {% if form.username.data %}
+            {% if edit_profile %}
               <h3 class="title has-text-grey">Edit Profile</h3>
             {% else %}
               <h3 class="title has-text-grey">Register</h3>
             {% endif %}
             <div class="box">
-              <form action="" method="post" name="register">
+              <form action="" method="post" name="register" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <div class="field">
                   <div class="control has-icons-left">
@@ -43,7 +43,7 @@
                           </p>
                         {% endfor %}
                 </div>
-                {% if form.username.data %}
+                {% if edit_profile %}
                   <div class="field">
                       <div class="control has-icons-left">
                         {{ form.old_password(class='input is-large',
@@ -90,21 +90,33 @@
                 {% endif %}
                 
                 <div class="field">
-                        <div class="control has-icons-left">
-                          {{ form.confirm_password(class='input is-large',
-                                           placeholder='confirm password') }}
-                          <span class="icon is-small is-left">
-                            <i class="fas fa-lock"></i>
-                          </span>   
-                        </div>
-                        {% for error in form.confirm_password.errors %}
-                          <p class="help has-background-warning">
-                              {{ error }}
-                          </p>
-                        {% endfor %}
-                      </div>
+                  <div class="control has-icons-left">
+                    {{ form.confirm_password(class='input is-large',
+                                      placeholder='confirm password') }}
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-lock"></i>
+                    </span>   
+                  </div>
+                  {% for error in form.confirm_password.errors %}
+                    <p class="help has-background-warning">
+                        {{ error }}
+                    </p>
+                  {% endfor %}
+                </div>
+                
+                <div class="field">
+                  <div class="control has-icons-left">
+                    {{ form.profile_picture(class='input') }}
+  
+                  </div>
+                  {% for error in form.profile_picture.errors %}
+                    <p class="help has-background-warning">
+                        {{ error }}
+                    </p>
+                  {% endfor %}
+                </div>
                 <button class="button is-block is-info is-large is-fullwidth">
-                  {% if form.username.data %}
+                  {% if edit_profile %}
                     Submit
                   {% else %}
                     Register

@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired, NumberRange, Optional, Length, EqualTo, Email, ValidationError
 from wtforms_components import IntegerField
+from flask_wtf.file import FileField, FileAllowed
 
 from datetime import datetime
 
@@ -26,6 +27,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=6, max=32)])   
     confirm_password = PasswordField("Confirm Password", validators=[EqualTo("password")])
+    profile_picture = FileField("Profile Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], "Invalid image format!")])
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
@@ -38,6 +40,7 @@ class ProfileEditForm(FlaskForm):
     old_password = PasswordField("Old Password", validators=[Optional(), Length(min=6, max=32)])
     new_password = PasswordField("New Password", validators=[Optional(), Length(min=6, max=32)])     
     confirm_password = PasswordField("Confirm Password", validators=[EqualTo("new_password")])
+    profile_picture = FileField("Profile Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], "Invalid image format!")])
 
 class ReviewForm(FlaskForm):
     score = SelectField("Your score:", choices=[("1", "1"), ("2", "2"), ("3", "3"), ("4", "4"), ("5", "5"), ("6", "6"), ("7", "7"), ("8", "8"), ("9", "9"), ("10", "10")])
