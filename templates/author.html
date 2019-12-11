@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Books{% endblock %}
+{% block title %}Author{% endblock %}
 {% block content %}
 <div class="container">
     <div class="level">
@@ -21,48 +21,63 @@
             </div>
             {% endif %}
         </div>
-    </div>          
-
-  {% if books %}
-      <div class="columns is-multiline">
-        {% for book in books %}
-        <div class="column is-2">
-          <div class="card  has-text-centered">
-              <div class="card-image">
-                <figure class="image is-3by4">
-                  <img src="{{ book.cover }}" alt="Placeholder image">
-                </figure>
-              </div>
-              <div class="card-content">
-                <a class="title is-5" href="{{ url_for('book_page', book_id=book.id) }}">
-                {{ book.title }}</a>
-                <br>
-                <p class="subtitle is-6">{{ book.year }}</p>
-              </div>
-              {% if current_user.is_admin %}
-                <div class="card-footer">
-                  <div class="columns fullwidth is-gapless">
-                    <div class="column">
-                        <a class="button is-warning is-outlined fullwidth"
-                        href="{{ url_for('book_page', book_id=book.id) }}/edit">Edit</a>
+    </div>       
+    <div class="columns">
+        <div class="column is-3">
+            <figure class="image is-3by4">
+            {% if author.photo %}
+                <img src="{{ author.photo }}">
+            {% else %}
+                <img src="{{ url_for('static', filename='profile_pictures/' + 'default.png') }}">
+            {% endif %}
+            </figure>
+        </div>
+        <div class="column is-9">
+            <p class="paragraph">{{author.description}}</p>
+            <p class="title">Books Written</p>
+            {% if books %}
+                <div class="columns is-multiline">
+                  {% for book in books %}
+                  <div class="column is-2">
+                    <div class="card  has-text-centered">
+                        <div class="card-image">
+                          <figure class="image is-3by4">
+                            <img src="{{ book.cover }}" alt="Placeholder image">
+                          </figure>
+                        </div>
+                        <div class="card-content">
+                          <a class="title is-5" href="{{ url_for('book_page', book_id=book.id) }}">
+                          {{ book.title }}</a>
+                          <br>
+                          <p class="subtitle is-6">{{ book.year }}</p>
+                        </div>
+                        {% if current_user.is_admin %}
+                          <div class="card-footer">
+                            <div class="columns fullwidth is-gapless">
+                              <div class="column">
+                                  <a class="button is-warning is-outlined fullwidth"
+                                  href="{{ url_for('book_page', book_id=book.id) }}/edit">Edit</a>
+                              </div>
+                              <div class="column">
+                                <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" name="delete_book">
+                                  <input type="hidden", name="_method", value="DELETE">
+                                  <button class="button is-danger is-outlined fullwidth">Delete</button>
+                                </form> 
+                              </div>
+                            </div>          
+                          </div>
+                        {% endif %}
                     </div>
-                    <div class="column">
-                      <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" name="delete_book">
-                        <input type="hidden", name="_method", value="DELETE">
-                        <button class="button is-danger is-outlined fullwidth">Delete</button>
-                      </form> 
-                    </div>
-                  </div>          
+                  </div>    
+                  {% endfor %}
                 </div>
-              {% endif %}
-          </div>
-        </div>    
-        {% endfor %}
-      </div>
-  
-  {% else %}
-  <p class="is-size-5">Nothing was found.</p>
-  {% endif %}
+            
+            {% else %}
+            <p class="is-size-5">Nothing was found.</p>
+            {% endif %}
+        </div>
+    </div>   
+
 </div>
 
 {% endblock %}
