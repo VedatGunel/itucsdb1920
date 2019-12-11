@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, TextAreaField, BooleanField
+from wtforms import StringField, PasswordField, SelectField, TextAreaField, BooleanField, RadioField
 from wtforms.validators import DataRequired, NumberRange, Optional, Length, EqualTo, Email, ValidationError
 from wtforms_components import IntegerField
 from flask_wtf.file import FileField, FileAllowed
@@ -27,6 +27,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=6, max=32)])   
     confirm_password = PasswordField("Confirm Password", validators=[EqualTo("password")])
+    gender = RadioField("Gender", choices=[("Male","Male"),("Female","Female"),("Other","Other")])
     profile_picture = FileField("Profile Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], "Invalid image format!")])
 
 class LoginForm(FlaskForm):
@@ -40,6 +41,7 @@ class ProfileEditForm(FlaskForm):
     old_password = PasswordField("Old Password", validators=[Optional(), Length(min=6, max=32)])
     new_password = PasswordField("New Password", validators=[Optional(), Length(min=6, max=32)])     
     confirm_password = PasswordField("Confirm Password", validators=[EqualTo("new_password")])
+    gender = RadioField("Gender", choices=[("Male","Male"),("Female","Female"),("Other","Other")])
     profile_picture = FileField("Profile Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], "Invalid image format!")])
 
 class ReviewForm(FlaskForm):

@@ -3,7 +3,7 @@ from flask_login import UserMixin
 
 
 class User(UserMixin):
-    def __init__(self, username, email, password, id=None, profile_picture=None):
+    def __init__(self, username, email, password, id=None, profile_picture=None, gender=None):
         self.username = username
         self.email = email
         self.password = password
@@ -11,6 +11,7 @@ class User(UserMixin):
         self.is_admin = False
         self.id = id
         self.profile_picture = profile_picture
+        self.gender = gender
 
     def get_id(self):
         return self.id

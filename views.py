@@ -101,6 +101,7 @@ def registration_page():
         email = form.data["email"]
         user = db.get_user_by_username(username)
         profile_picture = form.data["profile_picture"]
+        gender = form.data["gender"]
         if user is None:
             user = db.get_user_by_email(email)
             if user is None:
@@ -113,7 +114,7 @@ def registration_page():
                     profile_picture.save(os.path.join(
                     current_app.root_path, 'static/profile_pictures', filename
                     ))
-                user = User(username, email=email, password=password, profile_picture=filename)
+                user = User(username, email=email, password=password, profile_picture=filename, gender=gender)
                 db.add_user(user)
                 user = db.get_user_by_username(username)
                 login_user(user)
@@ -197,6 +198,7 @@ def profile_edit_page(user_id):
         username = form.data["username"]
         email = form.data["email"]
         password = None
+        gender = form.data["gender"]
         if form.data["old_password"]:
             password = hasher.hash(form.data["new_password"])
         profile_picture = form.data["profile_picture"]
@@ -208,7 +210,7 @@ def profile_edit_page(user_id):
             profile_picture.save(os.path.join(
             current_app.root_path, 'static/profile_pictures', filename
             ))
-        new_user = User(username=username, email=email, password=password, profile_picture=filename)
+        new_user = User(username=username, email=email, password=password, profile_picture=filename, gender=gender)
         if (form.data["old_password"] and hasher.verify(form.data["old_password"], user.password)) or (not form.data["old_password"] and not form.data["new_password"]):
             db.update_user(user_id, new_user)
             flash("User information updated successfully.")
@@ -217,6 +219,7 @@ def profile_edit_page(user_id):
             flash("Old password is wrong.")
     form.username.data = user.username
     form.email.data = user.email
+    form.gender.data = user.gender if user.gender else ""
     return render_template("register.html", form=form, edit_profile=True, searchform=searchform)
 
 @login_required
