@@ -15,9 +15,9 @@ class Database:
             cursor = connection.cursor()
             if book.author is not None:
                 if self.get_author(book.author) is None:
-                    book.author = self.add_author(book.author)
+                    book.author = self.add_author(Author(name=book.author))
                 else:
-                    book.author = self.get_author(book.author)
+                    book.author = self.get_author(book.author).id
             query2 = "INSERT INTO BOOK (TITLE, AUTHORID, GENRE, YR, PGNUM, COVER) VALUES (%s, %s, %s, %s, %s, %s) RETURNING ID"
             cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover))
             connection.commit()
@@ -29,9 +29,10 @@ class Database:
             cursor = connection.cursor()
             if book.author is not None:
                 if self.get_author(book.author) is None:
-                    book.author = self.add_author(book.author)
+                    book.author = self.add_author(Author(name=book.author))
                 else:
-                    book.author = self.get_author(book.author)
+                    self.update_author(Author(name=book.author))
+                    book.author = self.get_author(book.author).id
             query2 = "UPDATE BOOK SET TITLE = %s, AUTHORID = %s, GENRE = %s, YR = %s, PGNUM = %s, COVER = %s WHERE (ID = %s)"
             cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover, book_id))
             connection.commit()
@@ -142,11 +143,11 @@ class Database:
                 return None
         return user_id
 
-    def add_author(self, name):
+    def add_author(self, author):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "INSERT INTO AUTHOR (NAME) VALUES (%s) RETURNING ID"
-            cursor.execute(query, (name,))
+            query = "INSERT INTO AUTHOR (NAME, DESCRIPTION, PHOTO) VALUES (%s, %s, %s) RETURNING ID"
+            cursor.execute(query, (author.name, author.description, author.photo))
             connection.commit()
             author_id = cursor.fetchone()[0]
         return author_id
@@ -154,24 +155,24 @@ class Database:
     def get_author(self, name):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT ID, DESCRIPTION FROM AUTHOR WHERE (NAME = %s)"
+            query1 = "SELECT ID, DESCRIPTION, PHOTO FROM AUTHOR WHERE (NAME = %s)"
             cursor.execute(query1, (name,))           
             try:
-                id, description = cursor.fetchone()
+                id, description, photo = cursor.fetchone()
             except:
                 return None
-        return Author(name=name, id=id, description=description)
+        return Author(name=name, id=id, description=description, photo=photo)
 
     def get_author_by_id(self, author_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT NAME, DESCRIPTION FROM AUTHOR WHERE (ID = %s)"
+            query1 = "SELECT NAME, DESCRIPTION, PHOTO FROM AUTHOR WHERE (ID = %s)"
             cursor.execute(query1, (author_id,))           
             try:
-                name, description = cursor.fetchone()
+                name, description, photo = cursor.fetchone()
             except:
                 return None
-        return Author(name=name, id=author_id, description=description)
+        return Author(name=name, id=author_id, description=description, photo=photo)
 
     def delete_author(self, author_id):
         with dbapi2.connect(self.db_url) as connection:
@@ -183,9 +184,10 @@ class Database:
     def update_author(self, author):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "UPDATE AUTHOR SET NAME = %s, DESCRIPTION = %s WHERE (ID = %s)"
-            cursor.execute(query, (author.name, author.description, author.id))
+            query = "UPDATE AUTHOR SET NAME = %s, DESCRIPTION = %s, PHOTO = %s WHERE (ID = %s)"
+            cursor.execute(query, (author.name, author.description, author.photo, author.id))
             connection.commit()
+
 
     def add_review(self, review):
         with dbapi2.connect(self.db_url) as connection:

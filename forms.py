@@ -52,3 +52,4 @@ class SearchForm(FlaskForm):
 class AuthorForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(min=6, max=40)])
     description = TextAreaField("Description", validators=[Optional()])
+    photo = StringField("Photo", validators=[Optional(), Length(min=6, max=200)])

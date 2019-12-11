@@ -289,14 +289,16 @@ def author_edit_page(author_id):
         abort(401)
     form = AuthorForm()
     if form.validate_on_submit():
-        name = form.data["name"]
+        name = form.data["name"] 
         description = form.data["description"]
-        author_ = Author(id=author.id, name=name, description=description)
+        photo = form.data["photo"]
+        author_ = Author(id=author_id, name=name, description=description, photo=photo)
         db.update_author(author_)
         flash("Author updated successfully.")
         return redirect(url_for("author_page", author_id=author_id))
     form.name.data = author.name
     form.description.data = author.description if author.description else ""
+    form.photo.data = author.photo if author.photo else ""
     return render_template("author_edit.html", form=form, searchform=searchform)
 
 @login_required
