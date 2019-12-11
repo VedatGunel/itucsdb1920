@@ -10,4 +10,6 @@ PASSWORDS = {
 
 ADMIN_USERS = ["admin"]
 
+DATABASE_URL = "postgres://riadymlw:ss5FDNTx8FV3rXUl_eupIf8blg1F2K9P@manny.db.elephantsql.com:5432/riadymlw"
+
 UPLOAD_FOLDER = "static/profile_pictures/"
