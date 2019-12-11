@@ -2,12 +2,51 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <section class="hero">
-    <div class="hero-body">
-      <div class="container has-text-centered">
-        <h1 class="title">Readvice</h1>
-        <p class="subtitle">The internet book database.</p>
-      </div>
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <h1 class="title">Readvice</h1>
+      <p class="subtitle">The internet book database.</p>
     </div>
-  </section>
+  </div>
+</section>
+<section class="section">
+  <div class="container has-text-centered">
+    <h2 class="subtitle"> Top 10 Books</h2>
+    <div class="columns">
+      <div class="column is-6 is-offset-3">
+          <table class="table is-fullwidth">
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Score</th>
+              </tr>
+            {% for i in range(books| length) %}
+              <tr>
+                <th>{{i+1}}</td>
+                <td><div class="columns">
+                    <div class="column is-4">
+                        <figure class="media-left image is-4by5">
+                            {% if books[i].cover %}
+                              <img src="{{ books[i].cover }}">
+                            {% else %}
+                              <img src="https://www.abbeville.com/assets/common/images/edition_placeholder.png?">
+                            {% endif %}
+                        </figure>
+                    </div>       
+                      <div class="column is-9">
+                              <a href="{{url_for('book_page', book_id=books[i].id)}}">{{ books[i].title}}</a>
+                      </div>
+                    </div>
+                  </td>
+                <th><span class="icon"><i class="fas fa-star"></i>{{ scores[i]|round(1) }}/10</span></td>
+              </tr>
+            {% endfor %}
+            </table>
+      </div>
+        
+    </div>
+    
+  </div>
+</section>
 
 {% endblock %}

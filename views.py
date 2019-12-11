@@ -15,7 +15,9 @@ def home_page():
     searchform=SearchForm()
     today = datetime.today()
     day_name = today.strftime("%A")
-    return render_template("home.html", day=day_name, searchform=searchform)
+    db = current_app.config["db"]
+    books, scores = db.get_top_books()
+    return render_template("home.html", day=day_name, books=books, scores=scores, searchform=searchform)
 
 def books_page():
     searchform=SearchForm()

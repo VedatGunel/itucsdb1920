@@ -86,7 +86,17 @@ class Database:
                 books.append(Book(id=book_id, title=title, year=year, cover=cover))   
         return books
     
-
+    def get_top_books(self):
+        books = []
+        scores = []
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query1 = "SELECT BOOK.ID, BOOK.TITLE, BOOK.YR, BOOK.COVER, AVG(REVIEW.SCORE) FROM BOOK INNER JOIN REVIEW ON BOOK.ID = REVIEW.BOOKID GROUP BY BOOK.ID, BOOK.TITLE, BOOK.YR, BOOK.COVER ORDER BY AVG(REVIEW.SCORE) DESC LIMIT 10"
+            cursor.execute(query1)
+            for book_id, title, year, cover, avgscore in cursor:
+                books.append(Book(id=book_id, title=title, year=year, cover=cover))
+                scores.append(avgscore) 
+        return books, scores
     def add_user(self, user):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
