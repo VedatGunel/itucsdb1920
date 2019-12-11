@@ -67,7 +67,11 @@ class Database:
             cursor = connection.cursor()
             if query:
                 query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK WHERE LOWER(TITLE) LIKE LOWER(%s) ORDER BY ID"
-                like_pattern = '%{}%'.format(query)
+                query_words = query.split()
+                like_pattern = '%'
+                for word in query_words:
+                    like_pattern += '{}%'.format(word)
+                print(like_pattern)
                 cursor.execute(query1, (like_pattern,))
             else:
                 query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK ORDER BY ID"
