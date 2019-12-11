@@ -26,7 +26,7 @@ def book_page(book_id):
     searchform=SearchForm()
     db = current_app.config["db"]
     book = db.get_book(book_id)
-    reviews, user_ids = db.get_reviews(book_id)
+    reviews, users = db.get_reviews(book_id)
     if book is None:
         abort(404)
     form = ReviewForm()
@@ -38,7 +38,7 @@ def book_page(book_id):
         review_id = db.add_review(review)
         review.id = review_id
         return redirect(url_for("book_page", book_id = book_id))
-    return render_template("book.html", book=book, form=form, reviews=reviews, user_ids=user_ids, searchform=searchform)
+    return render_template("book.html", book=book, form=form, reviews=reviews, users=users, searchform=searchform)
 	
 @login_required
 def book_add_page():

@@ -75,8 +75,17 @@
   <section class="section">
     <div class="container">
       <h2 class="title">Reviews</h2>
-      {% for review, user_id in zip(reviews, user_ids) %}
+      {% for review, user in zip(reviews, users) %}
         <article class="media">
+          <figure class="media-left">
+              <p class="image is-64x64">
+                {% if user.profile_picture %}
+                  <img src="{{ url_for('static', filename='profile_pictures/' + user.profile_picture) }}">
+                {% else %}
+                  <img src="{{ url_for('static', filename='profile_pictures/' + 'default.png') }}">
+                {% endif %}
+              </p>
+            </figure>
           <div class="media-content">
             <div class="content">
               <p class="is-size-6 is-marginless">
@@ -91,7 +100,7 @@
               </p>
               <p class="is-marginless">Written by 
                 <strong class="is-size-4">
-                    <a class="is-link" href="{{ url_for('profile_page', user_id=user_id) }}">
+                    <a class="is-link" href="{{ url_for('profile_page', user_id=user.id) }}">
                       {{ review.author }}
                     </a>
                 </strong>
@@ -103,11 +112,11 @@
               </p>
             </div>
           </div>
-          {% if (user_id == current_user.id or current_user.is_admin) %}
+          {% if (user.id == current_user.id or current_user.is_admin) %}
           <div class="media-right">
               <div class="level">
                   <div class="level-left">
-                      {% if user_id == current_user.id %}
+                      {% if user.id == current_user.id %}
                       <div class="level-item">
                         <form action="{{ url_for('review_edit_page', review_id=review.id) }}" method="GET" name="edit_review">
                             <button class="button is-warning is-outlined is-small">Edit</button>

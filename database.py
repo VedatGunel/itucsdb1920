@@ -159,17 +159,22 @@ class Database:
 
     def get_reviews(self, book_id):
         reviews = []
-        user_ids = []
+        users = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             query = "SELECT USERID, SCORE, COMMENT, ID, DATEWRITTEN FROM REVIEW WHERE (BOOKID = %s) ORDER BY ID"
             cursor.execute(query, (book_id,))
             connection.commit()
             for userid, score, comment, review_id, datewritten in cursor:
-                user_ids.append(userid)
+                pp = self.get_user_by_id(userid).profile_picture
+                user_dict = {
+                    "id": userid,
+                    "profile_picture": pp
+                }
+                users.append(user_dict)
                 author = self.get_user_by_id(userid).username
                 reviews.append(Review(author, book_id, score, comment, review_id, datewritten))
-        return reviews, user_ids
+        return reviews, users
     
     def get_reviews_by_user(self, user_id):
         reviews = []
