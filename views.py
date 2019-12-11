@@ -10,7 +10,6 @@ from review import Review
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.utils import secure_filename
 import os
-import sys
 
 def home_page():
     searchform=SearchForm()
@@ -202,7 +201,6 @@ def profile_edit_page(user_id):
         gender = form.data["gender"]
         if form.data["old_password"]:
             password = hasher.hash(form.data["new_password"])
-        sys.stderr.flush()
         profile_picture = form.data["profile_picture"]
         filename = None
         if profile_picture:
@@ -210,7 +208,7 @@ def profile_edit_page(user_id):
             _, f_ext = os.path.splitext(filename)
             filename = username + f_ext
             profile_picture.save(os.path.join(
-            current_app.config["UPLOAD_FOLDER"], filename
+            current_app.root_path, 'static/profile_pictures', filename
             ))
         new_user = User(username=username, email=email, password=password, profile_picture=filename, gender=gender)
         if (form.data["old_password"] and hasher.verify(form.data["old_password"], user.password)) or (not form.data["old_password"] and not form.data["new_password"]):
