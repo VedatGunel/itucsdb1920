@@ -39,7 +39,7 @@ def book_page(book_id):
         review_id = db.add_review(review)
         review.id = review_id
         return redirect(url_for("book_page", book_id = book_id))
-    return render_template("book.html", book=book, author_id=int(author_id), form=form, reviews=reviews, users=users, searchform=searchform)
+    return render_template("book.html", book=book, author_id=author_id, form=form, reviews=reviews, users=users, searchform=searchform)
 	
 @login_required
 def book_add_page():

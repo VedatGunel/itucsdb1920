@@ -49,9 +49,11 @@ class Database:
             query1 = "SELECT TITLE, AUTHORID, GENRE, YR, PGNUM, COVER FROM BOOK WHERE (ID = %s)"
             cursor.execute(query1, (book_id,))           
             title, author_id, genre, year, pageNumber, cover = cursor.fetchone()
-            query2 = "SELECT NAME FROM AUTHOR WHERE (ID = %s)"
-            cursor.execute(query2, (author_id,))
-            author = cursor.fetchone()[0]
+            author = None
+            if author_id:
+                query2 = "SELECT NAME FROM AUTHOR WHERE (ID = %s)"
+                cursor.execute(query2, (author_id,))
+                author = cursor.fetchone()[0]
             query3 = "SELECT AVG(SCORE) FROM REVIEW WHERE (BOOKID = %s)"
             cursor.execute(query3, (book_id,))
             avgscore = cursor.fetchone()[0]
