@@ -63,8 +63,8 @@
                         <small class="is-size-4">{{ review.score }}/10</small>
                         <small class="is-size-6">{{review.datewritten.strftime('%e %B %Y, %H:%M')}}</small>
                         <br>
-                        {{ review.comment }}
                       </p>
+                      <p class="paragraph">{{ review.comment }}</p>                   
                     </div>
                   </div>
                   {% if (user_id == current_user.id or current_user.is_admin) %}

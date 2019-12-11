@@ -57,3 +57,10 @@ body {
   color: #fff;
 }
 
+.icon.yellow {
+    color: #ffe600;
+}
+
+.paragraph {
+    white-space: pre-wrap;
+}

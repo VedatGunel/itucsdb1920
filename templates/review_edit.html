@@ -11,13 +11,12 @@ Edit review
 					<form action="" method="POST" name="add_review">
 							{{ form.hidden_tag() }}
 							<div class="field">
-								<label for="score" class="label">Your score</label>
 								<div class="control">
-										{{ form.score(autofocus=False, class="select")}}
+									<p class="label">Your score: {{ form.score(autofocus=False, class="select")}}</p>	
 								</div>
 							</div>
 							<div class="field">
-									<label for="comment" class="label">Your comment</label>
+									<label for="comment" class="label">Your comment:</label>
 									<div class="control">
 											{{ form.comment(class="textarea")}}
 									</div>

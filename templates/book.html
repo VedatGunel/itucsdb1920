@@ -88,18 +88,17 @@
             </figure>
           <div class="media-content">
             <div class="content">
-              <p class="is-size-6 is-marginless">
+              <p class="is-size-5 is-marginless">
                 {% for i in range(review.score)%}
-                <span class="icon"><i class="fas fa-star"></i></span>
+                <span class="icon yellow"><i class="fas fa-star"></i></span>
                 {% endfor %}
                 {% for i in range(10 - review.score)%}
                 <span class="icon"><i class="far fa-star"></i></span>
                 {% endfor %}
                 <small class="is-size-4">{{ review.score }}/10</small>
-                 - Title
               </p>
               <p class="is-marginless">Written by 
-                <strong class="is-size-4">
+                <strong class="is-size-6">
                     <a class="is-link" href="{{ url_for('profile_page', user_id=user.id) }}">
                       {{ review.author }}
                     </a>
@@ -107,9 +106,7 @@
                  | <small class="is-size-6">{{review.datewritten.strftime('%e %B %Y, %H:%M')}}</small>
               </p>
                 <br>
-              <p>
-                {{ review.comment }}
-              </p>
+              <p class="is-marginless paragraph">{{ review.comment }}</p>
             </div>
           </div>
           {% if (user.id == current_user.id or current_user.is_admin) %}
@@ -147,13 +144,12 @@
       <form action="" method="POST" name="add_review">
         {{ form.hidden_tag() }}
         <div class="field">
-          <label for="score" class="label">Your score</label>
           <div class="control">
-              {{ form.score(autofocus=False, class="select")}}
+            <p class="label"> Your score: {{ form.score(autofocus=False, class="select")}}</p>
           </div>
         </div>
         <div class="field">
-            <label for="comment" class="label">Your comment</label>
+            <label for="comment" class="label">Your comment:</label>
             <div class="control">
                 {{ form.comment(class="textarea")}}
             </div>
