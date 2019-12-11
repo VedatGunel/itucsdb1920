@@ -48,3 +48,7 @@ class ReviewForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     query = StringField("Search...", validators=[DataRequired()])
+
+class AuthorForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired(), Length(min=6, max=40)])
+    description = TextAreaField("Description", validators=[Optional()])

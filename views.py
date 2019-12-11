@@ -3,7 +3,8 @@ from passlib.hash import pbkdf2_sha256 as hasher
 
 from flask import abort, current_app, render_template, request, redirect, url_for, flash
 from book import Book
-from forms import BookEditForm, LoginForm, RegistrationForm, ReviewForm, ProfileEditForm, SearchForm
+from author import Author
+from forms import BookEditForm, LoginForm, RegistrationForm, ReviewForm, ProfileEditForm, SearchForm, AuthorForm
 from user import User
 from review import Review
 from flask_login import login_user, logout_user, current_user, login_required
@@ -25,7 +26,7 @@ def books_page():
 def book_page(book_id):
     searchform=SearchForm()
     db = current_app.config["db"]
-    book = db.get_book(book_id)
+    book, author_id = db.get_book(book_id)
     reviews, users = db.get_reviews(book_id)
     if book is None:
         abort(404)
@@ -38,7 +39,7 @@ def book_page(book_id):
         review_id = db.add_review(review)
         review.id = review_id
         return redirect(url_for("book_page", book_id = book_id))
-    return render_template("book.html", book=book, form=form, reviews=reviews, users=users, searchform=searchform)
+    return render_template("book.html", book=book, author_id=int(author_id), form=form, reviews=reviews, users=users, searchform=searchform)
 	
 @login_required
 def book_add_page():
@@ -65,7 +66,7 @@ def book_edit_page(book_id):
     if not current_user.is_admin:
         abort(401)
     db = current_app.config["db"]
-    book = db.get_book(book_id)
+    book, _ = db.get_book(book_id)
     if book is None:
         abort(404)
     form = BookEditForm()
@@ -269,6 +270,47 @@ def review_edit_page(review_id):
     form.score.data = str(review.score)
     form.comment.data = review.comment
     return render_template("review_edit.html", form=form, searchform=searchform)
+
+def author_page(author_id):
+    searchform=SearchForm()
+    db = current_app.config["db"]
+    author = db.get_author_by_id(author_id)
+    books = db.get_books_by_author(author_id)
+    return render_template("author.html", author=author, books=books, searchform=searchform)
+
+@login_required
+def author_edit_page(author_id):
+    searchform=SearchForm()
+    db = current_app.config["db"]
+    author = db.get_author_by_id(author_id)
+    if author is None:
+        abort(404)
+    if not current_user.is_admin:
+        abort(401)
+    form = AuthorForm()
+    if form.validate_on_submit():
+        name = form.data["name"]
+        description = form.data["description"]
+        author_ = Author(id=author.id, name=name, description=description)
+        db.update_author(author_)
+        flash("Author updated successfully.")
+        return redirect(url_for("author_page", author_id=author_id))
+    form.name.data = author.name
+    form.description.data = author.description if author.description else ""
+    return render_template("author_edit.html", form=form, searchform=searchform)
+
+@login_required
+def delete_author(author_id):
+    db = current_app.config["db"]
+    review_ = db.get_author_by_id(author_id)
+    if review_ is None:
+        abort(404)
+    if current_user.is_admin:
+        db.delete_author(author_id)
+    else:
+        abort(401)
+    return redirect(url_for("home_page"))
+
     
 def search_page():
     db = current_app.config["db"]

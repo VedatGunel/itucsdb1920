@@ -1,8 +1,10 @@
 from book import Book
 from user import User
 from review import Review
+from author import Author
 import time
 import psycopg2 as dbapi2
+
 
 class Database:
     def __init__(self, db_url):
@@ -46,15 +48,15 @@ class Database:
             cursor = connection.cursor()
             query1 = "SELECT TITLE, AUTHORID, GENRE, YR, PGNUM, COVER FROM BOOK WHERE (ID = %s)"
             cursor.execute(query1, (book_id,))           
-            title, author, genre, year, pageNumber, cover = cursor.fetchone()
+            title, author_id, genre, year, pageNumber, cover = cursor.fetchone()
             query2 = "SELECT NAME FROM AUTHOR WHERE (ID = %s)"
-            cursor.execute(query2, (author,))
+            cursor.execute(query2, (author_id,))
             author = cursor.fetchone()[0]
             query3 = "SELECT AVG(SCORE) FROM REVIEW WHERE (BOOKID = %s)"
             cursor.execute(query3, (book_id,))
             avgscore = cursor.fetchone()[0]
         book_ = Book(id=book_id, title=title, author=author, genre=genre, year=year, pageNumber=pageNumber, cover=cover, avgscore=avgscore)
-        return book_
+        return book_, author_id
 
     def get_books(self, query=None):
         books = []
@@ -67,6 +69,16 @@ class Database:
             else:
                 query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK ORDER BY ID"
                 cursor.execute(query1)
+            for book_id, title, year, cover in cursor:
+                books.append(Book(id=book_id, title=title, year=year, cover=cover))   
+        return books
+
+    def get_books_by_author(self, author_id):
+        books = []
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK WHERE (AUTHORID = %s) ORDER BY ID"
+            cursor.execute(query1, (author_id,))
             for book_id, title, year, cover in cursor:
                 books.append(Book(id=book_id, title=title, year=year, cover=cover))   
         return books
@@ -140,13 +152,38 @@ class Database:
     def get_author(self, name):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT ID FROM AUTHOR WHERE (NAME = %s)"
+            query1 = "SELECT ID, DESCRIPTION FROM AUTHOR WHERE (NAME = %s)"
             cursor.execute(query1, (name,))           
             try:
-                id = cursor.fetchone()
+                id, description = cursor.fetchone()
             except:
                 return None
-        return id
+        return Author(name=name, id=id, description=description)
+
+    def get_author_by_id(self, author_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query1 = "SELECT NAME, DESCRIPTION FROM AUTHOR WHERE (ID = %s)"
+            cursor.execute(query1, (author_id,))           
+            try:
+                name, description = cursor.fetchone()
+            except:
+                return None
+        return Author(name=name, id=author_id, description=description)
+
+    def delete_author(self, author_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query1 = "DELETE FROM AUTHOR WHERE (ID = %s)"
+            cursor.execute(query1, (author_id,))           
+            connection.commit()
+
+    def update_author(self, author):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query = "UPDATE AUTHOR SET NAME = %s, DESCRIPTION = %s WHERE (ID = %s)"
+            cursor.execute(query, (author.name, author.description, author.id))
+            connection.commit()
 
     def add_review(self, review):
         with dbapi2.connect(self.db_url) as connection:
@@ -186,7 +223,7 @@ class Database:
             connection.commit()           
             for book_id, score, comment, review_id, datewritten in cursor:
                 author = self.get_user_by_id(user_id).username
-                book_names.append(self.get_book(book_id).title)
+                book_names.append(self.get_book(book_id)[0].title)
                 reviews.append(Review(author, book_id, score, comment, review_id, datewritten))
         return reviews, book_names
 

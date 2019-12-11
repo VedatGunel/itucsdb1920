@@ -33,6 +33,9 @@ def create_app():
     app.add_url_rule("/profile/<int:user_id>/edit", view_func=views.profile_edit_page, methods=["GET", "POST"])
     app.add_url_rule("/profile/<int:user_id>/delete", view_func=views.delete_profile, methods=["POST"])
     app.add_url_rule("/profile/<int:user_id>/delete_profile_picture", view_func=views.delete_profile_picture, methods=["POST"])
+    app.add_url_rule("/author/<int:author_id>", view_func=views.author_page)
+    app.add_url_rule("/author/<int:author_id>/edit", view_func=views.author_edit_page, methods=["GET", "POST"])
+    app.add_url_rule("/author/<int:author_id>/delete", view_func=views.delete_author, methods=["POST"])
     app.add_url_rule("/search", view_func=views.search_page, methods=["GET"])
 
     lm.init_app(app)
