@@ -23,7 +23,11 @@
             {% if book.avgscore %}
             <tr>
                 <th>Score:</th>
-                <td>{{ book.avgscore|round(1) }}/10</td>
+                {% if (book.avgscore|float) == (book.avgscore|int|float) %}
+                  <td>{{ book.avgscore|round(1)|int}}/10</td>
+                {% else %}
+                  <td>{{ book.avgscore|round(1)}}/10</td>
+                {% endif %}
             </tr>
             {% endif %}
             {% if book.author %}
