@@ -79,16 +79,26 @@
         <article class="media">
           <div class="media-content">
             <div class="content">
-              <p class="is-size-6">
-                <strong class="is-size-4">
-                  <a class="is-link" href="{{ url_for('profile_page', user_id=user_id) }}">
-                    {{ review.author }}
-                  </a>
-                </strong>
+              <p class="is-size-6 is-marginless">
+                {% for i in range(review.score)%}
                 <span class="icon"><i class="fas fa-star"></i></span>
+                {% endfor %}
+                {% for i in range(10 - review.score)%}
+                <span class="icon"><i class="far fa-star"></i></span>
+                {% endfor %}
                 <small class="is-size-4">{{ review.score }}/10</small>
-                <small class="is-size-6">{{review.datewritten.strftime('%Y-%m-%d %H:%M')}}</small>
+                 - Title
+              </p>
+              <p class="is-marginless">Written by 
+                <strong class="is-size-4">
+                    <a class="is-link" href="{{ url_for('profile_page', user_id=user_id) }}">
+                      {{ review.author }}
+                    </a>
+                </strong>
+                 | <small class="is-size-6">{{review.datewritten.strftime('%e %B %Y, %H:%M')}}</small>
+              </p>
                 <br>
+              <p>
                 {{ review.comment }}
               </p>
             </div>
