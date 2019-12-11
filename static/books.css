@@ -29,3 +29,31 @@ body {
 .extra-margin {
     margin-top: 1rem;
 }
+
+.navbar.is-danger.red-color {
+    background-color: #bd0026;
+    color: white;
+}
+
+.navbar.is-danger.red-color .navbar-brand > a.navbar-item:focus, .navbar.is-danger.red-color .navbar-brand > a.navbar-item:hover, .navbar.is-danger.red-color .navbar-brand > a.navbar-item.is-active,
+.navbar.is-danger.red-color .navbar-brand .navbar-link:focus,
+.navbar.is-danger.red-color .navbar-brand .navbar-link:hover,
+.navbar.is-danger.red-color .navbar-brand .navbar-link.is-active {
+  background-color: #d9022d;
+  color: #fff;
+}
+
+.navbar.is-danger.red-color .navbar-start > a.navbar-item:focus, .navbar.is-danger.red-color .navbar-start > a.navbar-item:hover, .navbar.is-danger.red-color .navbar-start > a.navbar-item.is-active,
+.navbar.is-danger.red-color .navbar-start .navbar-link:focus,
+.navbar.is-danger.red-color .navbar-start .navbar-link:hover,
+.navbar.is-danger.red-color .navbar-start .navbar-link.is-active,
+.navbar.is-danger.red-color .navbar-end > a.navbar-item:focus,
+.navbar.is-danger.red-color .navbar-end > a.navbar-item:hover,
+.navbar.is-danger.red-color .navbar-end > a.navbar-item.is-active,
+.navbar.is-danger.red-color .navbar-end .navbar-link:focus,
+.navbar.is-danger.red-color .navbar-end .navbar-link:hover,
+.navbar.is-danger.red-color .navbar-end .navbar-link.is-active {
+  background-color: #d9022d;
+  color: #fff;
+}
+
