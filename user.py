@@ -26,5 +26,5 @@ def get_user(user_id):
     db = current_app.config["db"]
     user_ = db.get_user_by_id(user_id)
     if user_ is not None:
-        user_.is_admin = db.check_admin(user_id)
+        user_.is_admin = db.check_admin(user_id) or user_.username in current_app.config["ADMIN_USERS"]
     return user_
