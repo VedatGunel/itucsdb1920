@@ -245,13 +245,14 @@ def delete_profile_picture(user_id):
         abort(404)
     if current_user.id == user_id:
         db.delete_profile_picture(int(user_id))
-        os.remove(os.path.join(
-            current_app.root_path, 'static/profile_pictures', user.profile_picture
-            ))
+        if(os.path.exists(os.path.join(current_app.root_path, 'static/profile_pictures', user.profile_picture))):
+            os.remove(os.path.join(
+                current_app.root_path, 'static/profile_pictures', user.profile_picture
+                ))
         flash("Profile picture deleted successfully.")
     else:
         abort(401)
-    return redirect(url_for("home_page"))
+    return redirect(url_for("profile_page", user_id=user_id))
 
 @login_required
 def make_admin(user_id):
