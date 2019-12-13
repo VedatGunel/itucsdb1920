@@ -33,6 +33,21 @@
                   </form>
                 </div>
               {% endif %}
+              {% if current_user.username == 'admin' and user_id != current_user.id and not user.is_admin %}              
+              <div class="level-item">
+                <form action="{{url_for('make_admin', user_id=user_id)}}" method="POST" name="make_admin">
+                    <button class="button is-primary is-outlined is-small">Make Admin</button>
+                </form>
+              </div>
+              {% endif %}
+              {% if current_user.username == 'admin' and user_id != current_user.id and user.is_admin %}              
+              <div class="level-item">
+                <form action="{{url_for('revoke_admin', user_id=user_id)}}" method="POST" name="revoke_admin">
+                    <input type="hidden", name="_method", value="DELETE">
+                    <button class="button is-danger is-outlined is-small">Revoke Admin</button>
+                </form>
+              </div>
+              {% endif %}
             </div>
         </div>          
         <div class="columns">

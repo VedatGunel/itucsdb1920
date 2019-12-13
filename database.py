@@ -119,7 +119,8 @@ class Database:
                 user_id, username, email, password, profile_picture, gender = cursor.fetchone()
             except:
                 return None
-        user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture, gender=gender)
+        is_admin = self.check_admin(user_id)
+        user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture, gender=gender, is_admin=is_admin)
         return user_
 
     def get_user_by_email(self, email):
@@ -131,7 +132,8 @@ class Database:
                 user_id, username, email, password, profile_picture, gender = cursor.fetchone()
             except:
                 return None
-        user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture, gender=gender)
+        is_admin = self.check_admin(user_id)
+        user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture, gender=gender, is_admin=is_admin)
         return user_
         
     def get_user_by_id(self, user_id):
@@ -143,7 +145,8 @@ class Database:
                 user_id, username, email, password, profile_picture, gender = cursor.fetchone()
             except:
                 return None
-            user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture, gender=gender)
+            is_admin = self.check_admin(user_id)
+            user_ = User(username, email=email, password=password, id=user_id, profile_picture=profile_picture, gender=gender, is_admin=is_admin)
         return user_
 
     def get_user_id(self, username):
@@ -282,6 +285,33 @@ class Database:
             cursor.execute(query2, (user.username, user.email, user.password, user.profile_picture, user.gender, user_id))
             connection.commit()
     
+    def add_admin(self, user_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query = "INSERT INTO ADMINS (ADMINID) VALUES (%s)"
+            cursor.execute(query, (user_id,))
+            connection.commit()
+
+    def delete_admin(self, user_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query = "DELETE FROM ADMINS WHERE (ADMINID = %s)"
+            cursor.execute(query, (user_id,))
+            connection.commit()
+
+    def check_admin(self, user_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query = "SELECT ADMINID FROM ADMINS WHERE (ADMINID = %s)"
+            cursor.execute(query, (user_id,))
+            connection.commit()
+            try:
+                review_id = cursor.fetchone()[0]
+                if review_id:
+                    return True
+            except:
+                return False
+
     def delete_profile_picture(self, user_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()

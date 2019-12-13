@@ -229,7 +229,8 @@ def delete_profile(user_id):
     if user is None:
         abort(404)
     if current_user.is_admin or current_user.id == user_id:
-        logout_user()
+        if not current_user.is_admin:
+            logout_user()
         db.delete_user(int(user_id))
         flash("User deleted successfully.")
     else:
@@ -251,6 +252,33 @@ def delete_profile_picture(user_id):
     else:
         abort(401)
     return redirect(url_for("home_page"))
+
+@login_required
+def make_admin(user_id):
+    db = current_app.config["db"]
+    user = db.get_user_by_id(user_id)
+    if user is None:
+        abort(404)
+    if current_user.username == "admin":
+        db.add_admin(user_id)
+        flash("User is now an admin.")
+    else:
+        abort(401)
+    return redirect(url_for("profile_page", user_id=user_id))
+
+@login_required
+def revoke_admin(user_id):
+    db = current_app.config["db"]
+    user = db.get_user_by_id(user_id)
+    if user is None:
+        abort(404)
+    if current_user.username == "admin":
+        db.delete_admin(user_id)
+        flash("Admin access revoked successfully.")
+    else:
+        abort(401)
+    return redirect(url_for("profile_page", user_id=user_id))
+
 
 @login_required
 def review_edit_page(review_id):
