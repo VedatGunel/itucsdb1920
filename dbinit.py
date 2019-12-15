@@ -1,14 +1,26 @@
 import os
 import sys
-
+import json
 import psycopg2 as dbapi2
+from book import Book
 
+
+def readFile():
+    books = []
+    with open('books.json',errors='ignore') as json_file:
+        data = json.load(json_file)
+        for book in data['books']["book"]:         
+            books.append(Book(title=book["title"], author=book["author"], genres=book["genres"], year=book["year"], pageNumber=book["pgnum"], cover=book["cover"], description=book["description"]))
+    return books
 
 INIT_STATEMENTS = [
     "DROP TABLE IF EXISTS REVIEW",
+    "DROP TABLE IF EXISTS ADMINS",
     "DROP TABLE IF EXISTS BOOKWORM",
-    "DROP TABLE IF EXISTS BOOK",
+    "DROP TABLE IF EXISTS GENRES",
+    "DROP TABLE IF EXISTS BOOK",   
     "DROP TABLE IF EXISTS AUTHOR",
+    
 
     """CREATE TABLE AUTHOR(
     ID SERIAL PRIMARY KEY,
@@ -20,11 +32,11 @@ INIT_STATEMENTS = [
     """CREATE TABLE BOOK(
     ID SERIAL PRIMARY KEY,
     TITLE VARCHAR(80) NOT NULL,
-    YR INTEGER,
-    GENRE VARCHAR(20),
+    YR INTEGER CHECK(YR>=0 AND YR<=2019),
     AUTHORID INTEGER REFERENCES AUTHOR ON DELETE SET NULL,
-    PGNUM INTEGER,
-    COVER VARCHAR(200)
+    PGNUM INTEGER CHECK(PGNUM>=0),
+    COVER VARCHAR(200),
+    DESCRIPTION VARCHAR(2000)
     )""",
     
     """CREATE TABLE BOOKWORM(
@@ -38,7 +50,7 @@ INIT_STATEMENTS = [
 
     """CREATE TABLE REVIEW(
         ID SERIAL PRIMARY KEY,
-        SCORE INTEGER NOT NULL,
+        SCORE INTEGER NOT NULL CHECK(SCORE>=1 AND SCORE<=10),
         COMMENT VARCHAR(2000),
         DATEWRITTEN TIMESTAMP,
         BOOKID INTEGER REFERENCES BOOK ON DELETE CASCADE,
@@ -47,9 +59,14 @@ INIT_STATEMENTS = [
     
     """CREATE TABLE ADMINS(
         ADMINID INTEGER UNIQUE REFERENCES BOOKWORM ON DELETE CASCADE
-    )"""
+    )""",
 
+    """CREATE TABLE GENRES(
+        BOOKID INTEGER REFERENCES BOOK ON DELETE CASCADE,
+        GENRE VARCHAR(20)
+    )"""
 ]
+
 
 def initialize(url):
     with dbapi2.connect(url) as connection:
