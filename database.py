@@ -15,7 +15,7 @@ class Database:
             cursor = connection.cursor()
             if book.author is not None:
                 if self.get_author(book.author) is None:
-                    book.author = self.add_author(Author(name=book.author)).id
+                    book.author = self.add_author(Author(name=book.author))
                 else:
                     book.author = self.get_author(book.author).id
             query2 = "INSERT INTO BOOK (TITLE, AUTHORID, YR, PGNUM, COVER, DESCRIPTION) VALUES (%s, %s, %s, %s, %s, %s) RETURNING ID"               
