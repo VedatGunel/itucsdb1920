@@ -33,12 +33,19 @@
             </figure>
         </div>
         <div class="column is-9">
-            <p class="paragraph">{{author.description}}</p>
+          <section class="section">
+            {% if author.description %}
+              <p class="paragraph">{{author.description}}</p>
+            {% else %}
+              <p class="paragraph">No description available for this author.</p>
+            {% endif %}
+          </section>
+          <section class="section">
             <p class="title">Books Written</p>
             {% if books %}
                 <div class="columns is-multiline">
                   {% for book in books %}
-                  <div class="column is-2">
+                  <div class="column is-3">
                     <div class="card  has-text-centered">
                         <div class="card-image">
                           <figure class="image is-3by4">
@@ -79,6 +86,8 @@
             {% else %}
             <p class="is-size-5">Nothing was found.</p>
             {% endif %}
+          </section>
+
         </div>
     </div>   
 
