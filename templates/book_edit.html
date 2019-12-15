@@ -59,11 +59,11 @@ Add book
                 </div>
 
                 <div class="field">
-                  <label for="genre" class="label">Genres</label>
+                  <label for="genres" class="label">Genres</label>
                   <div class="control">
-                    {{ form.genre(class='input') }}
+                    {{ form.genres(class='input') }}
                   </div>
-                  {% for error in form.genre.errors %}
+                  {% for error in form.genres.errors %}
                   <p class="help has-background-warning">
                       {{ error }}
                   </p>

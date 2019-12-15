@@ -1,4 +1,3 @@
-from datetime import datetime
 from passlib.hash import pbkdf2_sha256 as hasher
 
 from flask import abort, current_app, render_template, request, redirect, url_for, flash
@@ -10,14 +9,13 @@ from review import Review
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.utils import secure_filename
 import os
+from dbinit import readFile
 
 def home_page():
     searchform=SearchForm()
-    today = datetime.today()
-    day_name = today.strftime("%A")
     db = current_app.config["db"]
-    books, scores = db.get_top_books()
-    return render_template("home.html", day=day_name, books=books, scores=scores, searchform=searchform)
+    books = db.get_top_books()
+    return render_template("home.html", books=books, searchform=searchform)
 
 def books_page():
     searchform=SearchForm()
@@ -53,10 +51,11 @@ def book_add_page():
         title = form.data["title"]
         author = form.data["author"]
         year = form.data["year"]
-        genre = form.data["genre"]
+        genres = form.data["genres"]
+        genres = genres.split()
         pageNumber = form.data["pageNumber"]
         cover = form.data["cover"]
-        book = Book(title=title, author=author, year=year, genre=genre, pageNumber=pageNumber, cover=cover)
+        book = Book(title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, cover=cover)
         db = current_app.config["db"]
         book_id = db.add_book(book)
         return redirect(url_for("book_page", book_id=book_id))
@@ -76,16 +75,19 @@ def book_edit_page(book_id):
         title = form.data["title"]
         author = form.data["author"]
         year = form.data["year"]
-        genre = form.data["genre"]
+        genres = form.data["genres"]
+        genres = genres.split()
         pageNumber = form.data["pageNumber"]
         cover = form.data["cover"]
-        book = Book(title=title, author=author, year=year, genre=genre, pageNumber=pageNumber, cover=cover)
+        book = Book(title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, cover=cover)
         db.update_book(book_id, book)
         return redirect(url_for("book_page", book_id=book_id))
+    seperator = " "
+    genres = seperator.join(book.genres)
     form.title.data = book.title
     form.author.data = book.author if book.author else ""
     form.year.data = book.year if book.year else ""
-    form.genre.data = book.genre if book.genre else ""
+    form.genres.data = genres if genres else ""
     form.pageNumber.data = book.pageNumber if book.pageNumber else ""
     form.cover.data = book.cover if book.cover else ""
     return render_template("book_edit.html", form=form, searchform=searchform)
@@ -167,7 +169,7 @@ def delete_review(review_id):
 @login_required
 def delete_book(book_id):
     db = current_app.config["db"]
-    book = db.get_book_by_id(book_id)
+    book = db.get_book(book_id)
     if book is None:
         abort(404)
     if current_user.is_admin:
@@ -351,6 +353,8 @@ def delete_author(author_id):
 def search_page():
     db = current_app.config["db"]
     form = SearchForm()
-    print(form.query.data)
-    books = db.get_books(request.args.get("query"))
-    return render_template("books.html", books=books, searchform=form, search_page=True)
+    query = request.args.get("query")
+    genre = request.args.get("genre")
+    year = request.args.get("year")
+    books = db.get_books(query = query, genre = genre, year = year)
+    return render_template("books.html", books=books, searchform=form, query=query, genre=genre, year=year)

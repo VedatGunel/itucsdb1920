@@ -15,13 +15,15 @@ class Database:
             cursor = connection.cursor()
             if book.author is not None:
                 if self.get_author(book.author) is None:
-                    book.author = self.add_author(Author(name=book.author))
+                    book.author = self.add_author(Author(name=book.author)).id
                 else:
                     book.author = self.get_author(book.author).id
-            query2 = "INSERT INTO BOOK (TITLE, AUTHORID, GENRE, YR, PGNUM, COVER) VALUES (%s, %s, %s, %s, %s, %s) RETURNING ID"
-            cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover))
+            query2 = "INSERT INTO BOOK (TITLE, AUTHORID, YR, PGNUM, COVER, DESCRIPTION) VALUES (%s, %s, %s, %s, %s, %s) RETURNING ID"               
+            cursor.execute(query2, (book.title, book.author, book.year, book.pageNumber, book.cover, book.description))
             connection.commit()
             book_id = cursor.fetchone()[0]
+            for genre in book.genres:
+                self.add_genre(book_id, genre)
         return book_id
     
     def update_book(self, book_id, book):
@@ -33,9 +35,12 @@ class Database:
                 else:
                     self.update_author(Author(name=book.author))
                     book.author = self.get_author(book.author).id
-            query2 = "UPDATE BOOK SET TITLE = %s, AUTHORID = %s, GENRE = %s, YR = %s, PGNUM = %s, COVER = %s WHERE (ID = %s)"
-            cursor.execute(query2, (book.title, book.author, book.genre, book.year, book.pageNumber, book.cover, book_id))
+            query2 = "UPDATE BOOK SET TITLE = %s, AUTHORID = %s, YR = %s, PGNUM = %s, COVER = %s, DESCRIPTION = %s WHERE (ID = %s)"
+            cursor.execute(query2, (book.title, book.author, book.year, book.pageNumber, book.cover, book.description, book_id))
             connection.commit()
+            self.delete_genres(book_id)
+            for genre in book.genres:
+                self.add_genre(book_id, genre)
 
     def delete_book(self, book_id):
         with dbapi2.connect(self.db_url) as connection:
@@ -43,13 +48,15 @@ class Database:
             query = "DELETE FROM BOOK WHERE (ID = %s)"
             cursor.execute(query, (book_id,))
             connection.commit()
+            self.delete_genres(book_id)
+            
 
     def get_book(self, book_id):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query1 = "SELECT TITLE, AUTHORID, GENRE, YR, PGNUM, COVER FROM BOOK WHERE (ID = %s)"
+            query1 = "SELECT TITLE, AUTHORID, YR, PGNUM, COVER, DESCRIPTION FROM BOOK WHERE (ID = %s)"
             cursor.execute(query1, (book_id,))           
-            title, author_id, genre, year, pageNumber, cover = cursor.fetchone()
+            title, author_id, year, pageNumber, cover, description = cursor.fetchone()
             author = None
             if author_id:
                 query2 = "SELECT NAME FROM AUTHOR WHERE (ID = %s)"
@@ -58,10 +65,11 @@ class Database:
             query3 = "SELECT AVG(SCORE) FROM REVIEW WHERE (BOOKID = %s)"
             cursor.execute(query3, (book_id,))
             avgscore = cursor.fetchone()[0]
-        book_ = Book(id=book_id, title=title, author=author, genre=genre, year=year, pageNumber=pageNumber, cover=cover, avgscore=avgscore)
+            genres = self.get_genres(book_id)
+        book_ = Book(id=book_id, title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, cover=cover, description=description, avgscore=avgscore)
         return book_, author_id
 
-    def get_books(self, query=None):
+    def get_books(self, query=None, genre=None, year=None):
         books = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
@@ -71,8 +79,13 @@ class Database:
                 like_pattern = '%'
                 for word in query_words:
                     like_pattern += '{}%'.format(word)
-                print(like_pattern)
                 cursor.execute(query1, (like_pattern,))
+            elif genre:
+                query1 = "SELECT BOOK.ID, BOOK.TITLE, BOOK.YR, BOOK.COVER FROM BOOK INNER JOIN GENRES ON BOOK.ID = GENRES.BOOKID WHERE (GENRE = %s) GROUP BY BOOK.ID, BOOK.TITLE, BOOK.YR, BOOK.COVER ORDER BY BOOK.ID"
+                cursor.execute(query1, (genre,))
+            elif year:
+                query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK WHERE (YR = %s) ORDER BY ID"
+                cursor.execute(query1, (year,))
             else:
                 query1 = "SELECT ID, TITLE, YR, COVER FROM BOOK ORDER BY ID"
                 cursor.execute(query1)
@@ -92,15 +105,14 @@ class Database:
     
     def get_top_books(self):
         books = []
-        scores = []
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
             query1 = "SELECT BOOK.ID, BOOK.TITLE, BOOK.YR, BOOK.COVER, AVG(REVIEW.SCORE) FROM BOOK INNER JOIN REVIEW ON BOOK.ID = REVIEW.BOOKID GROUP BY BOOK.ID, BOOK.TITLE, BOOK.YR, BOOK.COVER ORDER BY AVG(REVIEW.SCORE) DESC LIMIT 10"
             cursor.execute(query1)
             for book_id, title, year, cover, avgscore in cursor:
-                books.append(Book(id=book_id, title=title, year=year, cover=cover))
-                scores.append(avgscore) 
-        return books, scores
+                books.append(Book(id=book_id, title=title, year=year, cover=cover, avgscore=avgscore))
+        return books
+
     def add_user(self, user):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
@@ -318,3 +330,29 @@ class Database:
             query2 = "UPDATE BOOKWORM SET PROFILEPICTURE = NULL WHERE (ID = %s)"
             cursor.execute(query2, (user_id,))
             connection.commit()
+
+    def add_genre(self, book_id, genre):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query = "INSERT INTO GENRES (BOOKID, GENRE) VALUES (%s, %s)"
+            cursor.execute(query, (book_id, genre))
+            connection.commit()
+
+    def delete_genres(self, book_id):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query = "DELETE FROM GENRES WHERE (BOOKID = %s)"
+            cursor.execute(query, (book_id,))
+            connection.commit()
+    
+    def get_genres(self, book_id):
+        with dbapi2.connect(self.db_url) as connection:
+            genres = []
+            cursor = connection.cursor()
+            query = "SELECT GENRE FROM GENRES WHERE (BOOKID = %s)"
+            cursor.execute(query, (book_id,))
+            for genre in cursor:
+                genres.append(genre[0])
+            cursor.execute(query, (book_id,))
+            connection.commit()
+            return genres       

@@ -14,7 +14,7 @@
             {% endif %}
         </figure>
       </div>
-      <div class="column is-half">
+      <div class="column is-4">
         <table class="table">
             <tr>
               <th>Title:</th>
@@ -39,13 +39,16 @@
             {% if book.year %}
             <tr>
               <th>Year:</th>
-              <td>{{ book.year }}</td>
+              <td><a href="{{ url_for('search_page', year = book.year) }}">{{ book.year }}</a></td>
             </tr>
             {% endif %}
-            {% if book.genre %}
+            {% if book.genres %}
             <tr>
               <th>Genres:</th>
-              <td>{{ book.genre }}</td>
+              <td>{% for genre in book.genres %} 
+                  <a href="{{ url_for('search_page', genre = genre) }}">{{ genre }}</a>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+              </td>
             </tr>
             {% endif %}
             {% if book.pageNumber %}
@@ -74,6 +77,9 @@
               </div>
             
           {% endif %}
+      </div>
+      <div class="column is-5">
+          <p class="paragraph"> {{ book.description }}</p>
       </div>
     </div>
   </div>

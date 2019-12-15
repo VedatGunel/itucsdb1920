@@ -18,7 +18,7 @@ class BookEditForm(FlaskForm):
             NumberRange(min=0, max=datetime.now().year),
         ],
     )
-    genre = StringField("Genre", validators=[Optional()])
+    genres = StringField("Genre", validators=[Optional()])
     pageNumber = IntegerField("Number of Pages", validators=[Optional(), NumberRange(min=0)])
     cover = StringField("Cover Image", validators=[Optional()])
 
