@@ -12,6 +12,24 @@
     {% else %}
       <h1 class="title is-3">Books</h1>
     {% endif %}
+    <p>Showing results {{12 * (page|int-1) + 1}}-{{12 * (page|int-1) + books|length}} of {{books|length}}</p>
+    {% if page and page|int > 1 %}
+      {% if query or genre or year %}
+        <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int-1)}}">Prev|</a>
+      {% else %}
+        <a href="{{url_for('books_page', p=page|int-1)}}">Prev</a>
+      {% endif %}
+    {% endif %}
+    {% if page|int < (books|length/12)|round(0, 'ceil') %}
+      {% if query or genre or year %}
+        <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int+1)}}">Next</a>
+      {% else %}
+        <a href="{{url_for('books_page', p=page|int+1)}}">Next</a>
+      {% endif %}
+    {% endif %}
+
+    
+
   
     {% if books %}
         <div class="columns is-multiline">

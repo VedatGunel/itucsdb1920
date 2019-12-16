@@ -20,8 +20,9 @@ def home_page():
 def books_page():
     searchform=SearchForm()
     db = current_app.config["db"]
-    books = db.get_books()
-    return render_template("books.html", books=books, searchform=searchform)
+    page = request.args.get("p") if request.args.get("p") else 1
+    books = db.get_books(p=page)
+    return render_template("books.html", books=books, page=page, searchform=searchform)
 
 def book_page(book_id):
     searchform=SearchForm()
@@ -356,5 +357,6 @@ def search_page():
     query = request.args.get("query")
     genre = request.args.get("genre")
     year = request.args.get("year")
-    books = db.get_books(query = query, genre = genre, year = year)
-    return render_template("books.html", books=books, searchform=form, query=query, genre=genre, year=year)
+    page = request.args.get("p") if request.args.get("p") else 1   
+    books = db.get_books(query = query, genre = genre, year = year, p = page)
+    return render_template("books.html", books=books, searchform=form, query=query, genre=genre, year=year, page=page)
