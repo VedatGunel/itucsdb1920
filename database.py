@@ -120,7 +120,7 @@ class Database:
                     query1 = "SELECT COUNT(BOOK.ID) FROM BOOK INNER JOIN GENRES ON BOOK.ID = GENRES.BOOKID WHERE (GENRE = %s)"
                     cursor.execute(query1, (genre,))
             else:
-                cursor.execute(query)
+                cursor.execute(query1)
             count = cursor.fetchone()[0]
         return count
 
