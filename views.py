@@ -54,7 +54,7 @@ def book_add_page():
         author = form.data["author"]
         year = form.data["year"]
         genres = form.data["genres"]
-        genres = genres.split()
+        genres = genres.split(', ')
         pageNumber = form.data["pageNumber"]
         cover = form.data["cover"]
         book = Book(title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, cover=cover)
@@ -78,13 +78,13 @@ def book_edit_page(book_id):
         author = form.data["author"]
         year = form.data["year"]
         genres = form.data["genres"]
-        genres = genres.split()
+        genres = genres.split(', ')
         pageNumber = form.data["pageNumber"]
         cover = form.data["cover"]
         book = Book(title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, cover=cover)
         db.update_book(book_id, book)
         return redirect(url_for("book_page", book_id=book_id))
-    seperator = " "
+    seperator = ", "
     genres = seperator.join(book.genres)
     form.title.data = book.title
     form.author.data = book.author if book.author else ""
