@@ -56,8 +56,9 @@ def book_add_page():
         genres = form.data["genres"]
         genres = genres.split(', ')
         pageNumber = form.data["pageNumber"]
+        description = form.data["description"]
         cover = form.data["cover"]
-        book = Book(title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, cover=cover)
+        book = Book(title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, description=description, cover=cover)
         db = current_app.config["db"]
         book_id = db.add_book(book)
         return redirect(url_for("book_page", book_id=book_id))
@@ -80,8 +81,9 @@ def book_edit_page(book_id):
         genres = form.data["genres"]
         genres = genres.split(', ')
         pageNumber = form.data["pageNumber"]
+        description = form.data["description"]
         cover = form.data["cover"]
-        book = Book(title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, cover=cover)
+        book = Book(title=title, author=author, year=year, genres=genres, pageNumber=pageNumber, description=description, cover=cover)
         db.update_book(book_id, book)
         return redirect(url_for("book_page", book_id=book_id))
     seperator = ", "
@@ -91,6 +93,7 @@ def book_edit_page(book_id):
     form.year.data = book.year if book.year else ""
     form.genres.data = genres if genres else ""
     form.pageNumber.data = book.pageNumber if book.pageNumber else ""
+    form.description.data = book.description if book.description else ""
     form.cover.data = book.cover if book.cover else ""
     return render_template("book_edit.html", form=form, searchform=searchform)
 

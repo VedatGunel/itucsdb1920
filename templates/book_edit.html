@@ -82,6 +82,17 @@ Add book
                   {% endfor %}
                 </div>
                 <div class="field">
+                  <label for="description" class="label">Description</label>
+                  <div class="control">
+                    {{ form.description(class='textarea') }}
+                  </div>
+                  {% for error in form.description.errors %}
+                  <p class="help has-background-warning">
+                      {{ error }}
+                  </p>
+                  {% endfor %}
+                </div>
+                <div class="field">
                     <label for="cover" class="label">Cover Image</label>
                     <div class="control">
                       {{ form.cover(class='input') }}
