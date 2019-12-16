@@ -12,21 +12,41 @@
     {% else %}
       <h1 class="title is-3">Books</h1>
     {% endif %}
-    <p>Showing results {{12 * (page|int-1) + 1}}-{{12 * (page|int-1) + books|length}} of {{books|length}}</p>
-    {% if page and page|int > 1 %}
-      {% if query or genre or year %}
-        <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int-1)}}">Prev|</a>
-      {% else %}
-        <a href="{{url_for('books_page', p=page|int-1)}}">Prev</a>
-      {% endif %}
-    {% endif %}
-    {% if page|int < (books|length/12)|round(0, 'ceil') %}
-      {% if query or genre or year %}
-        <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int+1)}}">Next</a>
-      {% else %}
-        <a href="{{url_for('books_page', p=page|int+1)}}">Next</a>
-      {% endif %}
-    {% endif %}
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <span>Showing results {{12 * (page|int-1) + 1}}-{{12 * (page|int-1) + books|length}} of {{count}}</span>
+        </div>
+        
+      </div>
+      <div class="level-right">
+        
+        {% if page and page|int > 1 %}
+          {% if query or genre or year %}
+          <div class="level-item">
+            <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int-1)}}">Prev|</a>
+          </div>         
+          {% else %}
+          <div class="level-item">
+            <a href="{{url_for('books_page', p=page|int-1)}}">Prev</a>
+          </div>            
+          {% endif %}
+        {% endif %}
+        {% if page|int < (count/12)|round(0, 'ceil') %}
+          {% if query or genre or year %}
+          <div class="level-item">
+            <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int+1)}}">Next</a>
+          </div>          
+          {% else %}
+          <div class="level-item">
+            <a href="{{url_for('books_page', p=page|int+1)}}">Next</a>
+          </div>           
+          {% endif %}
+        {% endif %} 
+      </div>
+    </div>
+    
+    
 
     
 
@@ -71,6 +91,38 @@
           </div>    
           {% endfor %}
         </div>
+        <div class="level">
+          <div class="level-left">
+
+          </div>  
+            <div class="level-right">          
+              {% if page and page|int > 1 %}
+                {% if query or genre or year %}
+                <div class="level-item">
+                  <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int-1)}}">Prev|</a>
+                </div>         
+                {% else %}
+                <div class="level-item">
+                  <a href="{{url_for('books_page', p=page|int-1)}}">Prev</a>
+                </div>            
+                {% endif %}
+              {% endif %}
+              {% if page|int < (count/12)|round(0, 'ceil') %}
+                {% if query or genre or year %}
+                <div class="level-item">
+                  <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int+1)}}">Next</a>
+                </div>
+              </div>>          
+                {% else %}
+                <div class="level-item">
+                  <a href="{{url_for('books_page', p=page|int+1)}}">Next</a>
+                </div>           
+                {% endif %}
+              {% endif %} 
+            </div>
+
+          </div>
+
     
     {% else %}
     <p class="is-size-5">Nothing was found.</p>

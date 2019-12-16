@@ -22,7 +22,8 @@ def books_page():
     db = current_app.config["db"]
     page = request.args.get("p") if request.args.get("p") else 1
     books = db.get_books(p=page)
-    return render_template("books.html", books=books, page=page, searchform=searchform)
+    count = db.get_books_count()
+    return render_template("books.html", books=books, page=page, count=count, searchform=searchform)
 
 def book_page(book_id):
     searchform=SearchForm()
@@ -359,4 +360,5 @@ def search_page():
     year = request.args.get("year")
     page = request.args.get("p") if request.args.get("p") else 1   
     books = db.get_books(query = query, genre = genre, year = year, p = page)
-    return render_template("books.html", books=books, searchform=form, query=query, genre=genre, year=year, page=page)
+    count = db.get_books_count()
+    return render_template("books.html", books=books, searchform=form, query=query, genre=genre, year=year, count=count, page=page)

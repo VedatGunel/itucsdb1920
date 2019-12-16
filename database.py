@@ -103,7 +103,15 @@ class Database:
             for book_id, title, year, cover in cursor:
                 books.append(Book(id=book_id, title=title, year=year, cover=cover))   
         return books
-    
+        
+    def get_books_count(self):
+        with dbapi2.connect(self.db_url) as connection:
+            cursor = connection.cursor()
+            query = "SELECT COUNT(ID) FROM BOOK"
+            cursor.execute(query)
+            count = cursor.fetchone()[0]
+        return count
+
     def get_top_books(self):
         books = []
         with dbapi2.connect(self.db_url) as connection:
