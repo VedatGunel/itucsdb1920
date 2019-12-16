@@ -103,12 +103,24 @@ class Database:
             for book_id, title, year, cover in cursor:
                 books.append(Book(id=book_id, title=title, year=year, cover=cover))   
         return books
-        
-    def get_books_count(self):
+
+    def get_books_count(self, query=None, year=None, genre=None):
         with dbapi2.connect(self.db_url) as connection:
             cursor = connection.cursor()
-            query = "SELECT COUNT(ID) FROM BOOK"
-            cursor.execute(query)
+            query1 = "SELECT COUNT(ID) FROM BOOK"
+            if query or year or genre:
+                query1 += " WHERE "
+                if query:
+                    query1 += "LOWER(TITLE) LIKE LOWER(%s)"
+                    cursor.execute(query1, (query,))
+                elif year:
+                    query1 += "(YR = %s)"
+                    cursor.execute(query1, (year,))
+                elif genre:
+                    query1 = "SELECT COUNT(BOOK.ID) FROM BOOK INNER JOIN GENRES ON BOOK.ID = GENRES.BOOKID WHERE (GENRE = %s)"
+                    cursor.execute(query1, (genre,))
+            else:
+                cursor.execute(query)
             count = cursor.fetchone()[0]
         return count
 

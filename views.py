@@ -360,5 +360,5 @@ def search_page():
     year = request.args.get("year")
     page = request.args.get("p") if request.args.get("p") else 1   
     books = db.get_books(query = query, genre = genre, year = year, p = page)
-    count = db.get_books_count()
+    count = db.get_books_count(query = query, genre = genre, year = year)
     return render_template("books.html", books=books, searchform=form, query=query, genre=genre, year=year, count=count, page=page)

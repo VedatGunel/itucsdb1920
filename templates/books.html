@@ -15,7 +15,12 @@
     <div class="level">
       <div class="level-left">
         <div class="level-item">
-          <span>Showing results {{12 * (page|int-1) + 1}}-{{12 * (page|int-1) + books|length}} of {{count}}</span>
+          {% if query or genre or year %}
+            <span>Showing results {{12 * (page|int-1) + 1}}-{{12 * (page|int-1) + books|length}} of {{count}}</span>
+          {% else %}
+            <span>Showing results {{12 * (page|int-1) + 1}}-{{12 * (page|int-1) + books|length}} of {{count}}</span>
+          {% endif%}
+         
         </div>
         
       </div>
@@ -24,7 +29,7 @@
         {% if page and page|int > 1 %}
           {% if query or genre or year %}
           <div class="level-item">
-            <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int-1)}}">Prev|</a>
+            <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int-1)}}">Prev</a>
           </div>         
           {% else %}
           <div class="level-item">
@@ -99,7 +104,7 @@
               {% if page and page|int > 1 %}
                 {% if query or genre or year %}
                 <div class="level-item">
-                  <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int-1)}}">Prev|</a>
+                  <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int-1)}}">Prev</a>
                 </div>         
                 {% else %}
                 <div class="level-item">
@@ -112,7 +117,7 @@
                 <div class="level-item">
                   <a href="{{url_for('search_page', year=year, genre=genre, query=query, p=page|int+1)}}">Next</a>
                 </div>
-              </div>>          
+              </div>          
                 {% else %}
                 <div class="level-item">
                   <a href="{{url_for('books_page', p=page|int+1)}}">Next</a>
