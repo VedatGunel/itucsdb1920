@@ -13,6 +13,7 @@ Readvice is a book database website where bookworms can talk about
 books. Users can leave reviews on the books they have read, see the
 average rating on books and what other people’s opinions are.
 
+
 Contents:
 
 .. toctree::
