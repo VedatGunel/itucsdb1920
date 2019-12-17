@@ -6,7 +6,7 @@ Database Design
 
 Entity-Relationship Diagram and detailed explanation of each entity are given below:
 
-   .. figure:: images/ERDigaram.png
+   .. figure:: images/ERDiagram.png
       :scale: 50 %
       :alt: Entity Relationship Diagram
 
