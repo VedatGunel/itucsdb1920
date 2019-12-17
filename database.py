@@ -112,7 +112,11 @@ class Database:
                 query1 += " WHERE "
                 if query:
                     query1 += "LOWER(TITLE) LIKE LOWER(%s)"
-                    cursor.execute(query1, (query,))
+                    query_words = query.split()
+                    like_pattern = '%'
+                    for word in query_words:
+                        like_pattern += '{}%'.format(word)
+                    cursor.execute(query1, (like_pattern,))
                 elif year:
                     query1 += "(YR = %s)"
                     cursor.execute(query1, (year,))
