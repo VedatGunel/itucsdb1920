@@ -79,7 +79,12 @@
           {% endif %}
       </div>
       <div class="column is-5">
-          <p class="paragraph"> {{ book.description }}</p>
+          {% if book.description %}
+            <p class="paragraph"> {{ book.description }}</p>
+          {% else %}
+            <p class="paragraph"> No description available for this book yet.</p>
+          {% endif %}
+          
       </div>
     </div>
   </div>
