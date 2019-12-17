@@ -95,7 +95,7 @@ Below reviews, "Write a review" section is available. If the user is not logged 
 
 Authorized users can see a review form, which has a score selection field and a comment field. By default, 1 is selected for score. Comment field is optional. After submitting the review, user is redirected to the book's page, and they can see their review at the bottom of reviews list.
 
-   .. figure:: images/WriteReviewNoLogin.png
+   .. figure:: images/WriteReview.png
       :scale: 50 %
       :alt: Write review
 
