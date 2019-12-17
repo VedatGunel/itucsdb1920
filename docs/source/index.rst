@@ -1,17 +1,17 @@
-Welcome to itucsdbNN's documentation!
-=====================================
+Welcome to itucsdb1920's documentation!
+=====================================================================
 
-:Team: Team Name
+:Team: itucsdb1920
 
 :Members:
 
-   * Member 1
-   * Member 2
-   * Member 3
-   * Member 4
-   * Member 5
+   * Vedat Günel
 
-**project description goes here (a few paragraphs)**
+
+**Readvice**
+Readvice is a book database website where bookworms can talk about
+books. Users can leave reviews on the books they have read, see the
+average rating on books and what other people’s opinions are.
 
 Contents:
 
