@@ -29,7 +29,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=6, max=32)])   
     confirm_password = PasswordField("Confirm Password", validators=[EqualTo("password")])
-    gender = RadioField("Gender", choices=[("Male","Male"),("Female","Female"),("Other","Other")])
+    gender = RadioField("Gender", validators=[Optional()], choices=[("Male","Male"),("Female","Female"),("Other","Other")])
     profile_picture = FileField("Profile Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], "Invalid image format!")])
 
 class LoginForm(FlaskForm):
@@ -43,7 +43,7 @@ class ProfileEditForm(FlaskForm):
     old_password = PasswordField("Old Password", validators=[Optional(), Length(min=6, max=32)])
     new_password = PasswordField("New Password", validators=[Optional(), Length(min=6, max=32)])     
     confirm_password = PasswordField("Confirm Password", validators=[EqualTo("new_password")])
-    gender = RadioField("Gender", choices=[("Male","Male"),("Female","Female"),("Other","Other")])
+    gender = RadioField("Gender", validators=[Optional()], choices=[("Male","Male"),("Female","Female"),("Other","Other")])
     profile_picture = FileField("Profile Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'], "Invalid image format!")])
 
 class ReviewForm(FlaskForm):
