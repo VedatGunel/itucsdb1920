@@ -1,4 +1,4 @@
-Welcome to itucsdb1920's documentation!
+itucsdb1920 documentation
 =====================================================================
 
 :Team: itucsdb1920
@@ -17,7 +17,7 @@ average rating on books and what other people’s opinions are.
 Contents:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
 
    user/index
    developer/index
